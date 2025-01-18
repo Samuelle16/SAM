@@ -645,3 +645,75 @@ body {
 .user-sales tr:hover {
     background: #333; /* Surbrillance au survol */
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Barre de navigation responsive */
+.navbar {
+    display: flex;
+    flex-wrap: wrap; /* Permet aux éléments de passer à la ligne */
+}
+
+.navbar .logo {
+    flex: 1; /* Laisse le logo occuper l'espace disponible */
+    display: flex;
+    align-items: center;
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap; /* Passe les éléments à la ligne si nécessaire */
+}
+
+.navbar ul li {
+    display: inline-block;
+}
+
+.navbar ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 8px 12px; /* Uniformise le padding */
+    border-radius: 5px; /* Arrondi */
+    transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+/* Media Query pour les petits écrans */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column; /* Empile les éléments verticalement */
+        align-items: flex-start; /* Aligne les éléments à gauche */
+    }
+
+    .navbar .logo {
+        justify-content: center; /* Centrer le logo sur mobile */
+        margin-bottom: 10px;
+    }
+
+    .navbar ul {
+        flex-direction: column; /* Affiche les liens verticalement */
+        gap: 10px; /* Ajoute un espace entre les liens */
+        width: 100%;
+    }
+
+    .navbar ul li a {
+        display: block; /* Chaque lien occupe toute la largeur */
+        text-align: center; /* Centre le texte dans chaque lien */
+        width: 100%;
+    }
+}
