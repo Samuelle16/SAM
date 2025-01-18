@@ -175,7 +175,7 @@ def upload_sales():
             offer_type = row['Type (Box ou Mobile)']
             plan = row['Plan (ULTYM, MUST, 130Go, 20Go)']
             quantity = int(row['Quantité'])
-            class_type = row['Class']  # Nouvelle colonne pour la classe
+            class_type = row['Class']
 
             user = User.query.filter_by(username=username).first()
             if not user:
@@ -183,13 +183,19 @@ def upload_sales():
                 db.session.add(user)
                 db.session.commit()
 
-            new_sale = Sale(date='2023-01-01', offer_type=offer_type, plan=plan, quantity=quantity, user_id=user.id, class_type=class_type)
+            new_sale = Sale(date=datetime.now().strftime('%Y-%m-%d'),
+                            offer_type=offer_type,
+                            plan=plan,
+                            quantity=quantity,
+                            user_id=user.id,
+                            class_type=class_type)
             db.session.add(new_sale)
 
         db.session.commit()
         return "Sales uploaded successfully!"
 
     return render_template('layout.html', page='upload_sales')
+
 
 
 @app.route('/admin/sales_ranking')

@@ -100,7 +100,7 @@
         <table>
             <thead>
                 <tr>
-                    <th>Date</th>
+                    <th>Username</th>
                     <th>Offer Type</th>
                     <th>Plan</th>
                     <th>Quantité</th>
@@ -110,7 +110,7 @@
             <tbody>
                 {% for sale in all_sales %}
                 <tr>
-                    <td>{{ sale.date }}</td>
+                    <td>{{ sale.user.username }}</td>
                     <td>{{ sale.offer_type }}</td>
                     <td>{{ sale.plan }}</td>
                     <td>{{ sale.quantity }}</td>
@@ -268,5 +268,51 @@
         {% endif %}
         {% endif %}
     </div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const tables = document.querySelectorAll("table");
+
+        tables.forEach(table => {
+            const headers = table.querySelectorAll("th");
+
+            headers.forEach((header, index) => {
+                header.addEventListener("click", () => {
+                    const rows = Array.from(table.querySelectorAll("tbody > tr"));
+                    const isAscending = header.classList.contains("asc");
+                    const direction = isAscending ? -1 : 1;
+
+                    rows.sort((rowA, rowB) => {
+                        const cellA = rowA.children[index].innerText.trim();
+                        const cellB = rowB.children[index].innerText.trim();
+
+                        // Compare as numbers if both values are numeric
+                        if (!isNaN(cellA) && !isNaN(cellB)) {
+                            return direction * (parseFloat(cellA) - parseFloat(cellB));
+                        }
+                        // Otherwise, compare as strings
+                        return direction * cellA.localeCompare(cellB);
+                    });
+
+                    // Remove old rows and append sorted rows
+                    const tbody = table.querySelector("tbody");
+                    tbody.innerHTML = "";
+                    rows.forEach(row => tbody.appendChild(row));
+
+                    // Update header class to reflect sort direction
+                    headers.forEach(h => h.classList.remove("asc", "desc"));
+                    header.classList.add(isAscending ? "desc" : "asc");
+                });
+            });
+        });
+    });
+</script>
+
+
+
+
+
+
 </body>
 </html>
