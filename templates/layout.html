@@ -16,7 +16,12 @@
             <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="OCF Logo">
             <span>OCF</span>
         </div>
-        <ul class="nav-links">
+         <button class="menu-toggle">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </button>
+        <ul class="menu">
             {% if session.get('role') == 'admin' %}
             <li><a href="/dashboard">Dashboard</a></li>
             <li><a href="/admin/create_user">Add User</a></li>
@@ -34,6 +39,10 @@
             {% endif %}
         </ul>
     </nav>
+
+    <div class="container">
+        <h1>Welcome to OCF CRM</h1>
+    </div>
 
     <!-- Main Container -->
     <div class="container">
@@ -339,7 +348,13 @@
     });
 </script>
 
-
+<script>
+        // Fonction pour afficher ou masquer le menu
+        document.querySelector('.menu-toggle').addEventListener('click', () => {
+            const menu = document.querySelector('.menu');
+            menu.classList.toggle('show');
+        });
+</script>
 
 
 
