@@ -144,16 +144,38 @@
 <!-- Affichage des ventes -->
 {% for detail in user_sales_details %}
 <div class="user-sales">
-    <h2>User: {{ detail.user.username }}</h2>
+    <h2>{{ detail.user.username }}</h2>
     <p>Role: {{ detail.user.role }}</p>
-    <p>Total Sales: {{ detail.total_sales | int }}</p>
+
+    <div class="totals">
+        <div class="total-box">
+            <h3>Total VV</h3>
+            <p class="number">{{ detail.total_vv }}</p>
+        </div>
+        <div class="total-box">
+            <h3>Total VR</h3>
+            <p class="number">{{ detail.total_vr }}</p>
+        </div>
+        <div class="total-box">
+            <h3>Total Mobiles</h3>
+            <p class="number">{{ detail.total_mobiles }}</p>
+        </div>
+        <div class="total-box total-sales">
+            <h3>Total Sales</h3>
+            <p class="number">{{ detail.total_vv + detail.total_vr + detail.total_mobiles }}</p>
+        </div>
+    </div>
+
+    <h3>Détails des ventes :</h3>
     <table>
         <thead>
             <tr>
                 <th>Date</th>
-                <th>Offer Type</th>
+                <th>Type d'offre</th>
                 <th>Plan</th>
                 <th>Quantité</th>
+                <th>Classe</th>
+                <th>Numéro de contrat</th>
             </tr>
         </thead>
         <tbody>
@@ -162,13 +184,17 @@
                 <td>{{ sale.date }}</td>
                 <td>{{ sale.offer_type }}</td>
                 <td>{{ sale.plan }}</td>
-                <td>{{ sale.quantity | int }}</td>
+                <td>{{ sale.quantity }}</td>
+                <td>{{ sale.class_type }}</td>
+                <td>{{ sale.contract_number }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
 <hr>
+
+
 {% endfor %}
 
 

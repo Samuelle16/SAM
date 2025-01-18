@@ -276,16 +276,22 @@ def all_sales():
 
     for user in users:
         sales = Sale.query.filter_by(user_id=user.id).all()
-        total_sales = sum(sale.quantity for sale in sales)
+
+        # Calcul des totaux par type
+        total_vv = sum(sale.quantity for sale in sales if sale.class_type == 'VV')
+        total_vr = sum(sale.quantity for sale in sales if sale.class_type == 'VR')
+        total_mobiles = sum(sale.quantity for sale in sales if sale.class_type == 'Mobiles')
+
         user_sales_details.append({
             'user': user,
             'sales': sales,
-            'total_sales': total_sales
+            'total_vv': total_vv,
+            'total_vr': total_vr,
+            'total_mobiles': total_mobiles
         })
 
-    total_global_sales = sum(detail['total_sales'] for detail in user_sales_details)
+    total_global_sales = sum(detail['total_vv'] + detail['total_vr'] + detail['total_mobiles'] for detail in user_sales_details)
 
-    # Passez toutes les données nécessaires au template
     return render_template(
         'layout.html',
         page='all_sales',
@@ -294,6 +300,7 @@ def all_sales():
         filter_username=filter_username,
         filter_role=filter_role
     )
+
 
 
 

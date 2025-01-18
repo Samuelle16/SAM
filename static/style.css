@@ -346,13 +346,302 @@ tr:hover {
 
 /* Specific Card Colors */
 .total-vv {
-    background: linear-gradient(135deg, #673ab7, #512da8); /* Violet */
+    background: linear-gradient(135deg, #000, #333); /* Dégradé noir */
 }
 
 .total-vr {
-    background: linear-gradient(135deg, #ff9800, #e65100); /* Orange */
+    background: linear-gradient(135deg, #000, #333); /* Dégradé noir */
 }
 
 .total-mobiles {
-    background: linear-gradient(135deg, #2196f3, #1565c0); /* Bleu */
+    background: linear-gradient(135deg, #000, #333); /* Dégradé noir */
+}
+
+
+
+
+
+
+
+
+
+/* plus pour faire un noir dégradé */
+
+
+
+
+
+
+
+
+button {
+    background-color: #000; /* Noir */
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+    background-color: #333; /* Vert plus foncé */
+    transform: translateY(-3px); /* Effet de "soulèvement" */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* Ombre accentuée */
+}
+
+
+
+.card {
+    flex: 1;
+    padding: 20px;
+    background: linear-gradient(135deg, #333, #444); /* Ajoute un dégradé subtil */
+    color: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Ombre plus marquée */
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: scale(1.05); /* Légère augmentation de taille */
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3); /* Ombre plus marquée au survol */
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 150%;
+    height: 150%;
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateX(-50%) rotate(45deg);
+    transition: opacity 0.3s ease;
+    z-index: 0;
+}
+
+.card h2 {
+    font-size: 1.8rem; /* Taille plus grande */
+    font-weight: bold;
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 1;
+}
+
+.card p {
+    font-size: 1rem;
+    color: #ccc; /* Texte secondaire en gris clair */
+    position: relative;
+    z-index: 1;
+}
+
+
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: white;
+    border-radius: 10px; /* Ajoute un arrondi aux coins */
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre autour de la table */
+}
+
+th, td {
+    border: none; /* Supprime les bordures par défaut */
+    padding: 12px 15px; /* Augmente le padding */
+    text-align: center; /* Centrer le contenu */
+}
+
+th {
+    background-color: #333; /* Vert */
+    color: white;
+    font-size: 1.1rem; /* Texte plus grand */
+    font-weight: bold;
+    text-transform: uppercase; /* Texte en majuscules */
+    position: relative;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2; /* Gris clair pour les lignes paires */
+}
+
+tr:hover {
+    background-color: #d4edda; /* Vert clair au survol */
+}
+
+td {
+    color: #555; /* Texte gris */
+    font-size: 1rem;
+}
+
+
+
+
+.navbar {
+    background-color: #333; /* Noir */
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 50px; /* Arrondi complet */
+    background-color: transparent;
+    transition: all 0.3s ease-in-out;
+}
+
+.navbar ul li a:hover {
+    background-color: #4caf50; /* Vert */
+    color: white;
+    transform: scale(1.1); /* Agrandissement léger */
+}
+
+
+
+body {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
+
+
+
+
+
+
+/* pour esthetique de all users and sales affichage de details par vendeur */
+
+
+
+
+
+
+/* Section globale pour chaque utilisateur */
+.user-sales {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #111; /* Noir mat */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: white;
+    overflow: hidden;
+}
+
+/* Titre du vendeur */
+.user-sales h2 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #ffcc00; /* Jaune vif */
+}
+
+/* Role */
+.user-sales p {
+    font-size: 1rem;
+    color: #ccc; /* Gris clair */
+}
+
+/* Totaux sous forme de cartes */
+.totals {
+    display: flex;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.total-box {
+    flex: 1;
+    padding: 20px;
+    background: linear-gradient(135deg, #000, #333); /* Dégradé noir */
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.total-box:hover {
+    transform: translateY(-5px); /* Effet d'élévation au survol */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.total-box h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #fff; /* Blanc pour le texte */
+}
+
+.total-box p.number {
+    margin: 10px 0 0;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ffcc00; /* Jaune vif pour les chiffres */
+}
+
+.total-sales {
+    background: linear-gradient(135deg, #222, #444); /* Dégradé plus clair pour Total Sales */
+}
+
+/* Table des ventes */
+.user-sales table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: #1a1a1a; /* Fond noir foncé */
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.user-sales th, .user-sales td {
+    padding: 12px 15px;
+    border: 1px solid #333; /* Bordures grises */
+    text-align: center;
+    color: white;
+}
+
+.user-sales th {
+    background: #333; /* Fond gris foncé */
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.user-sales tr:nth-child(even) {
+    background: #222; /* Alternance de lignes */
+}
+
+.user-sales tr:hover {
+    background: #333; /* Surbrillance au survol */
 }
