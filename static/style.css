@@ -791,3 +791,98 @@ body {
 .menu li a:hover {
     background-color: #555; /* Change la couleur de fond au survol */
 }
+
+
+
+
+
+
+
+
+/* Barre de navigation */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background-color: #333;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.navbar .logo img {
+    height: 40px;
+}
+
+/* Menu déroulant */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-toggle {
+    background-color: #333;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-toggle:hover {
+    background-color: #555;
+}
+
+/* Menu caché par défaut */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #333;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    max-height: 0; /* Caché par défaut */
+    opacity: 0; /* Invisible par défaut */
+    transition: max-height 0.5s ease, opacity 0.5s ease;
+    flex-direction: column;
+}
+
+/* Affichage du menu avec animation */
+.dropdown-menu.show {
+    max-height: 300px; /* Hauteur maximale (adapter en fonction du contenu) */
+    opacity: 1;
+}
+
+.dropdown-menu li {
+    margin: 0;
+}
+
+.dropdown-menu li a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-menu li a:hover {
+    background-color: #555;
+}

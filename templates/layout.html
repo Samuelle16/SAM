@@ -16,33 +16,29 @@
             <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="OCF Logo">
             <span>OCF</span>
         </div>
-         <button class="menu-toggle">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-        </button>
-        <ul class="menu">
-            {% if session.get('role') == 'admin' %}
-            <li><a href="/dashboard">Dashboard</a></li>
-            <li><a href="/admin/create_user">Add User</a></li>
-            <li><a href="/admin/upload_sales">Upload Sales</a></li>
-            <li><a href="/admin/all_sales">All Users & Sales</a></li>
-            <li><a href="/admin/sales_ranking">Sales Ranking</a></li>
-            <li><a href="/admin/view_archives">Archived Sales</a></li>
-            <li><a href="/admin/set_password">Set Password</a></li>
-            <li><a href="/logout">Logout</a></li>
-            {% elif session.get('role') == 'user' %}
-            <li><a href="/dashboard">Dashboard</a></li>
-            <li><a href="/logout">Logout</a></li>
-            {% else %}
-            <li><a href="/login">Login</a></li>
-            {% endif %}
-        </ul>
+        
+        <div class="dropdown">
+            <button class="dropdown-toggle">Menu</button>
+            <ul class="dropdown-menu">
+                {% if session.get('role') == 'admin' %}
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/admin/create_user">Add User</a></li>
+                <li><a href="/admin/upload_sales">Upload Sales</a></li>
+                <li><a href="/admin/all_sales">All Users & Sales</a></li>
+                <li><a href="/admin/sales_ranking">Sales Ranking</a></li>
+                <li><a href="/admin/view_archives">Archived Sales</a></li>
+                <li><a href="/admin/set_password">Set Password</a></li>
+                <li><a href="/logout">Logout</a></li>
+                {% elif session.get('role') == 'user' %}
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/logout">Logout</a></li>
+                {% else %}
+                <li><a href="/login">Login</a></li>
+                {% endif %}
+            </ul>
+        </div>
     </nav>
 
-    <div class="container">
-        <h1>Welcome to OCF CRM</h1>
-    </div>
 
     <!-- Main Container -->
     <div class="container">
@@ -349,12 +345,22 @@
 </script>
 
 <script>
-        // Fonction pour afficher ou masquer le menu
-        document.querySelector('.menu-toggle').addEventListener('click', () => {
-            const menu = document.querySelector('.menu');
-            menu.classList.toggle('show');
+        // Script pour afficher/masquer le menu déroulant
+        const dropdownToggle = document.querySelector('.dropdown-toggle');
+        const dropdownMenu = document.querySelector('.dropdown-menu');
+
+        dropdownToggle.addEventListener('click', () => {
+            dropdownMenu.classList.toggle('show');
         });
-</script>
+
+        // Fermer le menu si on clique ailleurs
+        document.addEventListener('click', (event) => {
+            if (!dropdownToggle.contains(event.target) && !dropdownMenu.contains(event.target)) {
+                dropdownMenu.classList.remove('show');
+            }
+        });
+
+ </script>
 
 
 
