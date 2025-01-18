@@ -80,47 +80,23 @@
         {% elif page == 'dashboard' %}
         <h1>Dashboard</h1>
         <div class="totals-container">
-    <div class="card total-vv">
-        <h2>Total VV Sales</h2>
-        <p class="total-number">{{ total_vv }}</p>
-        <p>VV sales generated so far</p>
-    </div>
-    <div class="card total-vr">
-        <h2>Total VR Sales</h2>
-        <p class="total-number">{{ total_vr }}</p>
-        <p>VR sales generated so far</p>
-    </div>
-    <div class="card total-mobiles">
-        <h2>Total Mobile Sales</h2>
-        <p class="total-number">{{ total_mobiles }}</p>
-        <p>Mobile sales generated so far</p>
-    </div>
-</div>
-
-
-        <div class="dropdown">
-            <button class="dropbtn">Filter by Class: {{ selected_class }}</button>
-            <div class="dropdown-content">
-                <form method="POST" action="/dashboard">
-                    <input type="hidden" name="class_filter" value="Brut">
-                    <button type="submit">Brut</button>
-                </form>
-                <form method="POST" action="/dashboard">
-                    <input type="hidden" name="class_filter" value="VV">
-                    <button type="submit">VV</button>
-                </form>
-                <form method="POST" action="/dashboard">
-                    <input type="hidden" name="class_filter" value="VR">
-                    <button type="submit">VR</button>
-                </form>
-                <form method="POST" action="/dashboard">
-                    <input type="hidden" name="class_filter" value="Mobiles">
-                    <button type="submit">Mobiles</button>
-                </form>
+            <div class="card total-vv">
+                <h2>Total VV Sales</h2>
+                <p class="total-number">{{ total_vv }}</p>
+                <p>VV sales generated so far</p>
+            </div>
+            <div class="card total-vr">
+                <h2>Total VR Sales</h2>
+                <p class="total-number">{{ total_vr }}</p>
+                <p>VR sales generated so far</p>
+            </div>
+            <div class="card total-mobiles">
+                <h2>Total Mobile Sales</h2>
+                <p class="total-number">{{ total_mobiles }}</p>
+                <p>Mobile sales generated so far</p>
             </div>
         </div>
-
-        <h2>Sales for Class: {{ selected_class }}</h2>
+        <h2>Sales</h2>
         <table>
             <thead>
                 <tr>
@@ -137,7 +113,7 @@
                     <td>{{ sale.date }}</td>
                     <td>{{ sale.offer_type }}</td>
                     <td>{{ sale.plan }}</td>
-                    <td>{{ sale.quantity | int }}</td>
+                    <td>{{ sale.quantity }}</td>
                     <td>{{ sale.class_type }}</td>
                 </tr>
                 {% endfor %}
@@ -145,37 +121,54 @@
         </table>
 
         {% elif page == 'all_sales' %}
-        <h1>All Users and Sales</h1>
-        <p>Total Sales (All Users): {{ total_global_sales }}</p>
+       <h1>All Users and Sales</h1>
+<p>Total Sales (All Users): {{ total_global_sales }}</p>
 
-        {% for detail in user_sales_details %}
-        <div class="user-sales">
-            <h2>User: {{ detail.user.username }}</h2>
-            <p>Role: {{ detail.user.role }}</p>
-            <p>Total Sales: {{ detail.total_sales | int }}</p>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Offer Type</th>
-                        <th>Plan</th>
-                        <th>Quantité</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for sale in detail.sales %}
-                    <tr>
-                        <td>{{ sale.date }}</td>
-                        <td>{{ sale.offer_type }}</td>
-                        <td>{{ sale.plan }}</td>
-                        <td>{{ sale.quantity | int }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <hr>
-        {% endfor %}
+<!-- Formulaire de filtrage -->
+<form method="POST" action="/admin/all_sales" class="filter-form">
+    <label for="filter-username">Filter by Username:</label>
+    <input type="text" id="filter-username" name="filter_username" value="{{ filter_username or '' }}">
+    
+    <label for="filter-role">Filter by Role:</label>
+    <select id="filter-role" name="filter_role">
+        <option value="">-- Select Role --</option>
+        <option value="user" {% if filter_role == 'user' %}selected{% endif %}>User</option>
+        <option value="manager" {% if filter_role == 'manager' %}selected{% endif %}>Manager</option>
+    </select>
+
+    <button type="submit">Apply Filters</button>
+</form>
+
+<!-- Affichage des ventes -->
+{% for detail in user_sales_details %}
+<div class="user-sales">
+    <h2>User: {{ detail.user.username }}</h2>
+    <p>Role: {{ detail.user.role }}</p>
+    <p>Total Sales: {{ detail.total_sales | int }}</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Offer Type</th>
+                <th>Plan</th>
+                <th>Quantité</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sale in detail.sales %}
+            <tr>
+                <td>{{ sale.date }}</td>
+                <td>{{ sale.offer_type }}</td>
+                <td>{{ sale.plan }}</td>
+                <td>{{ sale.quantity | int }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<hr>
+{% endfor %}
+
 
         {% elif page == 'sales_ranking' %}
         <h1>Sales Ranking</h1>
@@ -195,7 +188,7 @@
                     <td>{{ index + 1 }}</td>
                     <td>{{ user.username }}</td>
                     <td>{{ user.role }}</td>
-                    <td>{{ user.total_sales | int }}</td>
+                    <td>{{ user.total_sales }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -217,7 +210,7 @@
                     <td>{{ index + 1 }}</td>
                     <td>{{ user.username }}</td>
                     <td>{{ user.role }}</td>
-                    <td>{{ user.total_sales | int }}</td>
+                    <td>{{ user.total_sales }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -239,7 +232,7 @@
                     <td>{{ index + 1 }}</td>
                     <td>{{ user.username }}</td>
                     <td>{{ user.role }}</td>
-                    <td>{{ user.total_sales | int }}</td>
+                    <td>{{ user.total_sales }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -264,7 +257,7 @@
                     <td>{{ archive.date }}</td>
                     <td>{{ archive.offer_type }}</td>
                     <td>{{ archive.plan }}</td>
-                    <td>{{ archive.quantity | int }}</td>
+                    <td>{{ archive.quantity }}</td>
                     <td>{{ archive.archived_at }}</td>
                 </tr>
                 {% endfor %}
@@ -275,10 +268,5 @@
         {% endif %}
         {% endif %}
     </div>
-
-
-    
-
-
 </body>
 </html>

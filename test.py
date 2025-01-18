@@ -197,12 +197,14 @@ def sales_ranking():
     if 'user_id' not in session or session.get('role') != 'admin':
         return redirect(url_for('login'))
 
-    users = User.query.all()
+    # Exclure les administrateurs
+    users = User.query.filter(User.role != 'admin').all()
     ranking_mobiles = []
     ranking_vr = []
     ranking_vv = []
 
     for user in users:
+        # Récupérer le total des ventes par classe pour chaque utilisateur
         total_sales_mobiles = sum(sale.quantity for sale in user.sales if sale.class_type == 'Mobiles')
         total_sales_vr = sum(sale.quantity for sale in user.sales if sale.class_type == 'VR')
         total_sales_vv = sum(sale.quantity for sale in user.sales if sale.class_type == 'VV')
@@ -211,10 +213,12 @@ def sales_ranking():
         ranking_vr.append({'username': user.username, 'role': user.role, 'total_sales': total_sales_vr})
         ranking_vv.append({'username': user.username, 'role': user.role, 'total_sales': total_sales_vv})
 
+    # Trier chaque liste de classement par ventes totales (ordre décroissant)
     ranking_mobiles.sort(key=lambda x: x['total_sales'], reverse=True)
     ranking_vr.sort(key=lambda x: x['total_sales'], reverse=True)
     ranking_vv.sort(key=lambda x: x['total_sales'], reverse=True)
 
+    # Passer les classements dans le contexte du template
     return render_template(
         'layout.html',
         page='sales_ranking',
@@ -223,6 +227,7 @@ def sales_ranking():
         ranking_vv=ranking_vv,
         enumerate=enumerate
     )
+
 
 
 
@@ -240,12 +245,22 @@ def view_archives():
     return render_template('layout.html', page='view_archives', archives=archives)
 
 
-@app.route('/admin/all_sales')
+@app.route('/admin/all_sales', methods=['GET', 'POST'])
 def all_sales():
     if 'user_id' not in session or session.get('role') != 'admin':
         return redirect(url_for('login'))
 
-    users = User.query.all()
+    filter_username = request.form.get('filter_username', None)  # Récupère le filtre s'il existe
+    filter_role = request.form.get('filter_role', None)  # Récupère le filtre par rôle
+
+    query = User.query.filter(User.role != 'admin')  # Exclure les administrateurs
+
+    if filter_username:
+        query = query.filter(User.username.like(f"%{filter_username}%"))  # Filtrer par nom d'utilisateur
+    if filter_role:
+        query = query.filter(User.role == filter_role)  # Filtrer par rôle
+
+    users = query.all()
     user_sales_details = []
 
     for user in users:
@@ -260,7 +275,16 @@ def all_sales():
     total_global_sales = sum(detail['total_sales'] for detail in user_sales_details)
 
     # Passez toutes les données nécessaires au template
-    return render_template('layout.html', page='all_sales', user_sales_details=user_sales_details, total_global_sales=total_global_sales)
+    return render_template(
+        'layout.html',
+        page='all_sales',
+        user_sales_details=user_sales_details,
+        total_global_sales=total_global_sales,
+        filter_username=filter_username,
+        filter_role=filter_role
+    )
+
+
 
 @app.route('/admin/set_password', methods=['GET', 'POST'])
 def set_password():
@@ -296,6 +320,20 @@ def set_password():
     </html>
     '''
 
+@app.route('/admin/delete_user/<int:user_id>', methods=['POST'])
+def delete_user(user_id):
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect(url_for('login'))
+
+    user = User.query.get(user_id)
+    if not user:
+        return "User not found", 404
+
+    # Supprimer l'utilisateur et ses ventes associées
+    Sale.query.filter_by(user_id=user.id).delete()
+    db.session.delete(user)
+    db.session.commit()
+    return redirect(url_for('all_sales'))
 
 
 
