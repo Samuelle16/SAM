@@ -1,0 +1,358 @@
+/* Global Styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+    overflow-x: hidden; /* Empêche le débordement horizontal */
+}
+
+/* Navbar */
+.navbar {
+    background-color: #333; /* Noir */
+    padding: 10px 20px;
+    display: flex;
+    flex-wrap: wrap; /* Permet à la barre de navigation de passer à la ligne si nécessaire */
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    position: fixed; /* Fixée en haut */
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box; /* Inclut le padding et la bordure dans la largeur */
+}
+
+.navbar .logo {
+    display: flex;
+    align-items: center;
+    white-space: nowrap; /* Empêche le texte du logo de se déborder */
+}
+
+.navbar .logo img {
+    width: 30px; /* Taille ajustée du logo */
+    height: 30px;
+    margin-right: 10px;
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 15px; /* Espace entre les liens */
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap; /* Les éléments passent à la ligne si nécessaire */
+}
+
+.navbar ul li {
+    display: inline-block;
+}
+
+.navbar ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 8px 12px; /* Uniformise le padding */
+    border-radius: 5px; /* Arrondi */
+    transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+.navbar ul li a:hover {
+    color: #ffcc00; /* Jaune */
+    background-color: #444; /* Gris foncé */
+}
+
+/* Container */
+.container {
+    max-width: 1000px; /* Largeur maximale pour contenir tout */
+    margin: 80px auto 20px; /* Espace pour éviter le chevauchement avec la navbar */
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow-x: auto; /* Ajout d'un défilement horizontal en cas de contenu trop large */
+}
+
+/* Header Styles */
+h1 {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+p {
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Totals Section */
+.totals-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.card {
+    flex: 1;
+    padding: 20px;
+    background-color: #333;
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.card .total-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #ffcc00; /* Jaune vif */
+}
+
+/* Specific Card Colors */
+.total-box {
+    background-color: #4caf50; /* Vert */
+}
+
+.total-mobile {
+    background-color: #2196f3; /* Bleu */
+}
+
+/* Form Styles */
+form {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+input, button {
+    font-size: 1rem;
+    padding: 10px;
+    border: 1px solid #333; /* Noir */
+    border-radius: 5px;
+}
+
+input:focus, button:focus {
+    outline: none;
+    border-color: #000; /* Noir */
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.5); /* Effet de focus */
+}
+
+button {
+    background-color: #333; /* Noir */
+    color: white;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #555; /* Gris foncé */
+    transform: scale(1.05); /* Zoom léger */
+}
+
+/* Error and Success Messages */
+.error {
+    color: red;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.success {
+    color: green;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: white;
+}
+
+th, td {
+    border: 1px solid #333; /* Noir */
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #333; /* Noir */
+    color: white;
+    cursor: pointer;
+    position: relative;
+    text-align: center;
+}
+
+th::after {
+    content: '⇅'; /* Icône de tri */
+    font-size: 0.8rem;
+    position: absolute;
+    right: 10px;
+    opacity: 0.6;
+}
+
+td {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #e6e6e6; /* Gris clair au survol */
+}
+
+/* Dropdown */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background-color: #333; /* Noir */
+    color: white;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dropbtn:hover {
+    background-color: #555; /* Gris foncé */
+    color: #ffcc00; /* Jaune */
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 150px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.dropdown-content button {
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 12px 16px;
+    width: 100%;
+    cursor: pointer;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.dropdown-content button:last-child {
+    border-bottom: none;
+}
+
+.dropdown-content button:hover {
+    background-color: #f1f1f1; /* Gris clair */
+    color: #ffcc00; /* Jaune au survol */
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+
+/* Totals Section */
+.totals-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.card {
+    flex: 1;
+    padding: 20px;
+    background-color: #333; /* Couleur de fond par défaut */
+    color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre */
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 120%;
+    height: 120%;
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateX(-50%) rotate(45deg);
+    transition: opacity 0.3s ease;
+    z-index: 0;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.card:hover::before {
+    opacity: 0.1;
+}
+
+.card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.card .total-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #ffcc00; /* Jaune vif */
+    position: relative;
+    z-index: 1;
+}
+
+.card p {
+    font-size: 0.9rem;
+    color: #ddd;
+    position: relative;
+    z-index: 1;
+}
+
+/* Specific Card Colors */
+.total-vv {
+    background: linear-gradient(135deg, #673ab7, #512da8); /* Violet */
+}
+
+.total-vr {
+    background: linear-gradient(135deg, #ff9800, #e65100); /* Orange */
+}
+
+.total-mobiles {
+    background: linear-gradient(135deg, #2196f3, #1565c0); /* Bleu */
+}

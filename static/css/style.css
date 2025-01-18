@@ -1,0 +1,149 @@
+/* Global Styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+/* Container */
+.container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Header Styles */
+h1 {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+p {
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Form Styles */
+form {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+input, button {
+    font-size: 1rem;
+    padding: 10px;
+    border: 1px solid #333; /* Noir */
+    border-radius: 5px;
+}
+
+input:focus, button:focus {
+    outline: none;
+    border-color: #000; /* Noir */
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.5); /* Effet de focus */
+}
+
+button {
+    background-color: #333; /* Noir */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #555; /* Gris foncé */
+}
+
+/* Error and Success Messages */
+.error {
+    color: red;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.success {
+    color: green;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: white;
+}
+
+th, td {
+    border: 1px solid #333; /* Noir */
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #333; /* Noir */
+    color: white;
+    text-align: center;
+}
+
+td {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #e6e6e6; /* Gris clair au survol */
+}
+
+/* Navbar */
+.navbar {
+    background-color: #333; /* Noir */
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.navbar .logo {
+    display: flex;
+    align-items: center;
+}
+
+.navbar .logo img {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.navbar ul li a:hover {
+    color: #ffcc00; /* Jaune au survol */
+}

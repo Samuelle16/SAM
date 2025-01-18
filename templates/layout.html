@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCF - CRM Dashboard</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="OCF Logo">
+            <span>OCF</span>
+        </div>
+        <ul class="nav-links">
+            {% if session.get('role') == 'admin' %}
+            <li><a href="/dashboard">Dashboard</a></li>
+            <li><a href="/admin/create_user">Add User</a></li>
+            <li><a href="/admin/upload_sales">Upload Sales</a></li>
+            <li><a href="/admin/all_sales">All Users & Sales</a></li>
+            <li><a href="/admin/sales_ranking">Sales Ranking</a></li>
+            <li><a href="/admin/view_archives">Archived Sales</a></li>
+            <li><a href="/admin/set_password">Set Password</a></li>
+            <li><a href="/logout">Logout</a></li>
+            {% elif session.get('role') == 'user' %}
+            <li><a href="/dashboard">Dashboard</a></li>
+            <li><a href="/logout">Logout</a></li>
+            {% else %}
+            <li><a href="/login">Login</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        {% if page == 'login' %}
+        <div class="form-container">
+            <h1 class="main-title gradient">Welcome to OCF</h1>
+            {% if error %}
+            <p class="error">{{ error }}</p>
+            {% endif %}
+            <form method="POST" action="/login">
+                <input type="text" name="username" placeholder="Enter your username" required>
+                <input type="password" name="password" placeholder="Enter your password" required>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+
+        {% elif page == 'create_user' %}
+        <h1>Create a New User</h1>
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+        {% if success %}
+        <p class="success">{{ success }}</p>
+        {% endif %}
+        <form method="POST" action="/admin/create_user">
+            <input type="text" name="username" placeholder="Enter username" required>
+            <input type="password" name="password" placeholder="Enter password" required>
+            <button type="submit">Create User</button>
+        </form>
+
+        {% elif page == 'upload_sales' %}
+        <h1>Upload Sales</h1>
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+        {% if success %}
+        <p class="success">{{ success }}</p>
+        {% endif %}
+        <form method="POST" enctype="multipart/form-data" action="/admin/upload_sales">
+            <input type="file" name="file" accept=".xlsx" required>
+            <button type="submit">Upload</button>
+        </form>
+
+        {% elif page == 'dashboard' %}
+        <h1>Dashboard</h1>
+        <div class="totals-container">
+    <div class="card total-vv">
+        <h2>Total VV Sales</h2>
+        <p class="total-number">{{ total_vv }}</p>
+        <p>VV sales generated so far</p>
+    </div>
+    <div class="card total-vr">
+        <h2>Total VR Sales</h2>
+        <p class="total-number">{{ total_vr }}</p>
+        <p>VR sales generated so far</p>
+    </div>
+    <div class="card total-mobiles">
+        <h2>Total Mobile Sales</h2>
+        <p class="total-number">{{ total_mobiles }}</p>
+        <p>Mobile sales generated so far</p>
+    </div>
+</div>
+
+
+        <div class="dropdown">
+            <button class="dropbtn">Filter by Class: {{ selected_class }}</button>
+            <div class="dropdown-content">
+                <form method="POST" action="/dashboard">
+                    <input type="hidden" name="class_filter" value="Brut">
+                    <button type="submit">Brut</button>
+                </form>
+                <form method="POST" action="/dashboard">
+                    <input type="hidden" name="class_filter" value="VV">
+                    <button type="submit">VV</button>
+                </form>
+                <form method="POST" action="/dashboard">
+                    <input type="hidden" name="class_filter" value="VR">
+                    <button type="submit">VR</button>
+                </form>
+                <form method="POST" action="/dashboard">
+                    <input type="hidden" name="class_filter" value="Mobiles">
+                    <button type="submit">Mobiles</button>
+                </form>
+            </div>
+        </div>
+
+        <h2>Sales for Class: {{ selected_class }}</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Offer Type</th>
+                    <th>Plan</th>
+                    <th>Quantité</th>
+                    <th>Class</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sale in all_sales %}
+                <tr>
+                    <td>{{ sale.date }}</td>
+                    <td>{{ sale.offer_type }}</td>
+                    <td>{{ sale.plan }}</td>
+                    <td>{{ sale.quantity | int }}</td>
+                    <td>{{ sale.class_type }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% elif page == 'all_sales' %}
+        <h1>All Users and Sales</h1>
+        <p>Total Sales (All Users): {{ total_global_sales }}</p>
+
+        {% for detail in user_sales_details %}
+        <div class="user-sales">
+            <h2>User: {{ detail.user.username }}</h2>
+            <p>Role: {{ detail.user.role }}</p>
+            <p>Total Sales: {{ detail.total_sales | int }}</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Offer Type</th>
+                        <th>Plan</th>
+                        <th>Quantité</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sale in detail.sales %}
+                    <tr>
+                        <td>{{ sale.date }}</td>
+                        <td>{{ sale.offer_type }}</td>
+                        <td>{{ sale.plan }}</td>
+                        <td>{{ sale.quantity | int }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <hr>
+        {% endfor %}
+
+        {% elif page == 'sales_ranking' %}
+        <h1>Sales Ranking</h1>
+        <h2>Mobiles</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Total Quantité</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for index, user in enumerate(ranking_mobiles) %}
+                <tr>
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.role }}</td>
+                    <td>{{ user.total_sales | int }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>VR</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Total Quantité</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for index, user in enumerate(ranking_vr) %}
+                <tr>
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.role }}</td>
+                    <td>{{ user.total_sales | int }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>VV</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Total Quantité</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for index, user in enumerate(ranking_vv) %}
+                <tr>
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.role }}</td>
+                    <td>{{ user.total_sales | int }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% elif page == 'view_archives' %}
+        <h1>Archived Sales</h1>
+        {% if archives %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Offer Type</th>
+                    <th>Plan</th>
+                    <th>Quantité</th>
+                    <th>Archived At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for archive in archives %}
+                <tr>
+                    <td>{{ archive.date }}</td>
+                    <td>{{ archive.offer_type }}</td>
+                    <td>{{ archive.plan }}</td>
+                    <td>{{ archive.quantity | int }}</td>
+                    <td>{{ archive.archived_at }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No archived sales available.</p>
+        {% endif %}
+        {% endif %}
+    </div>
+
+
+    
+
+
+</body>
+</html>
