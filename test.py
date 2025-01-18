@@ -28,7 +28,7 @@ class Sale(db.Model):
     quantity = db.Column(db.Integer, nullable=False)  # Quantité
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     class_type = db.Column(db.String(20), nullable=False)  # Ajout de la colonne classe
-
+    contract_number = db.Column(db.String(50), nullable=False)  # Numéro de contrat
 
 # Archived Sale model
 class ArchivedSale(db.Model):
@@ -175,7 +175,9 @@ def upload_sales():
             offer_type = row['Type (Box ou Mobile)']
             plan = row['Plan (ULTYM, MUST, 130Go, 20Go)']
             quantity = int(row['Quantité'])
-            class_type = row['Class']
+            class_type = row['Class']  # Classe (VR, VV, etc.)
+            contract_number = str(row['Numéro de contrat'])  # Numéro de contrat
+            
 
             user = User.query.filter_by(username=username).first()
             if not user:
@@ -183,19 +185,22 @@ def upload_sales():
                 db.session.add(user)
                 db.session.commit()
 
-            new_sale = Sale(date=datetime.now().strftime('%Y-%m-%d'),
-                            offer_type=offer_type,
-                            plan=plan,
-                            quantity=quantity,
-                            user_id=user.id,
-                            class_type=class_type)
+            new_sale = Sale(
+                date='2023-01-01',
+                offer_type=offer_type,
+                plan=plan,
+                quantity=quantity,
+                user_id=user.id,
+                class_type=class_type,
+                contract_number=contract_number,
+                
+            )
             db.session.add(new_sale)
 
         db.session.commit()
         return "Sales uploaded successfully!"
 
     return render_template('layout.html', page='upload_sales')
-
 
 
 @app.route('/admin/sales_ranking')
