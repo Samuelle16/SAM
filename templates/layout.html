@@ -291,34 +291,38 @@
         </table>
 
         {% elif page == 'view_archives' %}
-        <h1>Archived Sales</h1>
-        {% if archives %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Offer Type</th>
-                    <th>Plan</th>
-                    <th>Quantité</th>
-                    <th>Numéro de contrat</th>
-                    <th>Archived At</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for archive in archives %}
-                <tr>
-                    <td>{{ archive.date }}</td>
-                    <td>{{ archive.offer_type }}</td>
-                    <td>{{ archive.plan }}</td>
-                    <td>{{ archive.quantity }}</td>
-                    <td>{{ archive.contract_number }}</td>
-                    <td>{{ archive.archived_at }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-        <p>No archived sales available.</p>
+      <h1>Archived Sales</h1>
+{% if archives %}
+<form method="POST" action="/admin/delete_archives" onsubmit="return confirm('Are you sure you want to delete all archives?');">
+    <button type="submit" class="delete-button">Delete All Archives</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Offer Type</th>
+            <th>Plan</th>
+            <th>Quantité</th>
+            <th>Numéro de contrat</th>
+            <th>Archived At</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for archive in archives %}
+        <tr>
+            <td>{{ archive.date }}</td>
+            <td>{{ archive.offer_type }}</td>
+            <td>{{ archive.plan }}</td>
+            <td>{{ archive.quantity }}</td>
+            <td>{{ archive.contract_number }}</td>
+            <td>{{ archive.archived_at }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No archived sales available.</p>
         {% endif %}
         {% endif %}
     </div>

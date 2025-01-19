@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
@@ -240,6 +240,28 @@ def sales_ranking():
     )
 
 
+
+@app.route('/admin/delete_archives', methods=['POST'])
+def delete_archives():
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect(url_for('login'))
+    
+    try:
+        count_before = ArchivedSale.query.count()  # Compter les archives avant suppression
+        print(f"Number of archives before deletion: {count_before}")
+
+        ArchivedSale.query.delete()  # Supprime toutes les archives
+        db.session.commit()
+
+        count_after = ArchivedSale.query.count()  # Compter les archives après suppression
+        print(f"Number of archives after deletion: {count_after}")
+
+        flash(f'All {count_before} archives have been successfully deleted.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'An error occurred while deleting archives: {str(e)}', 'error')
+    
+    return redirect(url_for('view_archives'))
 
 
 

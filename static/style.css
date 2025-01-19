@@ -1146,3 +1146,28 @@ body {
 
 
 
+.flash-messages {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    width: 300px;
+    max-width: 90%;
+}
+
+.flash-message {
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.flash-message.success {
+    background-color: #4caf50; /* Vert pour les succès */
+}
+
+.flash-message.error {
+    background-color: #f44336; /* Rouge pour les erreurs */
+}
