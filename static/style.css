@@ -800,6 +800,35 @@ body {
 
 
 
+.table-container {
+    overflow-x: auto; /* Active le défilement horizontal */
+    margin-top: 20px; /* Ajoute un espace au-dessus */
+}
+
+table {
+    width: 100%; /* S'assure que le tableau prend toute la largeur disponible */
+    min-width: 600px; /* Largeur minimale pour activer le défilement si nécessaire */
+    border-collapse: collapse; /* Supprime les espaces entre les cellules */
+}
+
+th, td {
+    padding: 12px 15px;
+    border: 1px solid #ddd; /* Bordures légères */
+    text-align: left; /* Alignement par défaut */
+}
+
+th {
+    background-color: #333; /* Couleur de fond des en-têtes */
+    color: white; /* Couleur du texte */
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9; /* Couleur alternée pour les lignes */
+}
+
+tr:hover {
+    background-color: #e6e6e6; /* Couleur au survol */
+}
 
 
 

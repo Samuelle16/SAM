@@ -148,6 +148,8 @@
 
 <!-- Affichage des ventes -->
 {% for detail in user_sales_details %}
+
+<div class="table-container">
 <div class="user-sales">
     <h2>{{ detail.user.username }}</h2>
     <p>Role: {{ detail.user.role }}</p>
@@ -196,6 +198,7 @@
             {% endfor %}
         </tbody>
     </table>
+</div>
 </div>
 <hr>
 
