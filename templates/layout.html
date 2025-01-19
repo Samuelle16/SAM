@@ -32,16 +32,26 @@
             <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="OCF Logo">
             <span>OCF</span>
         </div>
-        <ul class="menu">
-            <li><a href="/dashboard">Dashboard</a></li>
-            <li><a href="/admin/create_user">Add User</a></li>
-            <li><a href="/admin/upload_sales">Upload Sales</a></li>
-            <li><a href="/admin/all_sales">All Users & Sales</a></li>
-            <li><a href="/admin/sales_ranking">Sales Ranking</a></li>
-            <li><a href="/admin/view_archives">Archived Sales</a></li>
-            <li><a href="/admin/set_password">Set Password</a></li>
-            <li><a href="/logout">Logout</a></li>
-        </ul>
+       <ul class="menu">
+        {% if session.get('role') == 'admin' %}
+        <!-- Menu pour les administrateurs -->
+        <li><a href="/dashboard">Dashboard</a></li>
+        <li><a href="/admin/create_user">Add User</a></li>
+        <li><a href="/admin/upload_sales">Upload Sales</a></li>
+        <li><a href="/admin/all_sales">All Users & Sales</a></li>
+        <li><a href="/admin/sales_ranking">Sales Ranking</a></li>
+        <li><a href="/admin/view_archives">Archived Sales</a></li>
+        <li><a href="/admin/set_password">Set Password</a></li>
+        <li><a href="/logout">Logout</a></li>
+        {% elif session.get('role') == 'user' %}
+        <!-- Menu pour les utilisateurs -->
+        <li><a href="/dashboard">Dashboard</a></li>
+        <li><a href="/logout">Logout</a></li>
+        {% else %}
+        <!-- Menu par défaut -->
+        <li><a href="/login">Login</a></li>
+        {% endif %}
+    </ul>
     </div>
 
     <!-- Menu Icon -->
