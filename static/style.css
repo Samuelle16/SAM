@@ -1182,7 +1182,7 @@ body {
     background-repeat: no-repeat; /* Empêche la répétition du fond */
     background-attachment: fixed; /* Fixe le fond lors du défilement */
     background-position: center center; /* Centre le fond */
-    color: white; /* Texte en blanc pour un contraste optimal */
+    color:  #333; /* Texte en blanc pour un contraste optimal */
     margin: 0;
     padding: 0;
     font-family: 'Roboto', sans-serif; /* Police globale */
@@ -1192,3 +1192,33 @@ body {
 
 
 
+
+
+.filter-form label {
+    color: #333; /* Couleur sombre pour le texte des labels */
+    font-weight: bold; /* Rendre le texte plus lisible */
+    margin-right: 10px; /* Espacement entre le label et le champ */
+}
+
+.filter-form input {
+    color: #333; /* Couleur du texte à l'intérieur des champs */
+    background-color: #f9f9f9; /* Couleur de fond */
+    border: 1px solid #ccc; /* Bordure légère */
+    padding: 10px;
+    border-radius: 5px;
+    width: auto; /* Ajuste la largeur pour les petits écrans */
+}
+
+.filter-form button {
+    background-color: #333; /* Fond du bouton */
+    color: white; /* Texte du bouton */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.filter-form button:hover {
+    background-color: #555; /* Fond au survol */
+}

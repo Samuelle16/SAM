@@ -32,7 +32,7 @@
             <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="OCF Logo">
             <span>OCF</span>
         </div>
-       <ul class="menu">
+        <ul class="menu">
         {% if session.get('role') == 'admin' %}
         <!-- Menu pour les administrateurs -->
         <li><a href="/dashboard">Dashboard</a></li>
@@ -121,7 +121,7 @@
                 <p>Mobile sales generated so far</p>
             </div>
         </div>
-        <h2>Sales</h2>
+
 
          <form method="POST" action="/dashboard" class="filter-form">
          <!-- Filtrer par nom d'utilisateur -->
