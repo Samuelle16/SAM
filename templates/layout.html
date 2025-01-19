@@ -249,6 +249,29 @@
 
         {% elif page == 'sales_ranking' %}
         <h1>Sales Ranking</h1>
+
+         <h2>VR</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Total Quantité</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for index, user in enumerate(ranking_vr) %}
+                <tr>
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.role }}</td>
+                    <td>{{ user.total_sales }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
         <h2>Mobiles</h2>
         <table>
             <thead>
@@ -271,27 +294,6 @@
             </tbody>
         </table>
 
-        <h2>VR</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Rank</th>
-                    <th>Username</th>
-                    <th>Role</th>
-                    <th>Total Quantité</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for index, user in enumerate(ranking_vr) %}
-                <tr>
-                    <td>{{ index + 1 }}</td>
-                    <td>{{ user.username }}</td>
-                    <td>{{ user.role }}</td>
-                    <td>{{ user.total_sales }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
 
         <h2>VV</h2>
         <table>
