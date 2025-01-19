@@ -78,44 +78,44 @@ def dashboard():
 
     user = User.query.get(session['user_id'])
 
-    # Filtrage par classe
-    selected_class = request.form.get('class_filter', 'Brut')  # 'Brut' par défaut
+    # Récupérer les filtres du formulaire
+    filter_username = request.form.get('filter_username', '').strip()
+    filter_contract_number = request.form.get('filter_contract_number', '').strip()
+
+    # Début de la requête
+    sales_query = Sale.query
 
     if user.role == 'admin':
-        # Admin voit toutes les ventes
-        if selected_class == 'Brut':
-            all_sales = Sale.query.all()
-        else:
-            all_sales = Sale.query.filter_by(class_type=selected_class).all()
-
-        total_vv = sum(sale.quantity for sale in all_sales if sale.class_type == 'VV')
-        total_vr = sum(sale.quantity for sale in all_sales if sale.class_type == 'VR')
-        total_mobiles = sum(sale.quantity for sale in all_sales if sale.class_type == 'Mobiles')
-
-        return render_template('layout.html', page='dashboard',
-                               all_sales=all_sales,
-                               total_vv=total_vv,
-                               total_vr=total_vr,
-                               total_mobiles=total_mobiles,
-                               selected_class=selected_class)
-
+        # Filtrer pour les administrateurs
+        if filter_username:
+            sales_query = sales_query.join(User).filter(User.username.ilike(f"%{filter_username}%"))
+        if filter_contract_number:
+            sales_query = sales_query.filter(Sale.contract_number.ilike(f"%{filter_contract_number}%"))
+        all_sales = sales_query.all()
     elif user.role == 'user':
-        # User voit uniquement ses ventes
-        if selected_class == 'Brut':
-            user_sales = Sale.query.filter_by(user_id=user.id).all()
-        else:
-            user_sales = Sale.query.filter_by(user_id=user.id, class_type=selected_class).all()
+        # Filtrer uniquement les ventes de l'utilisateur connecté
+        sales_query = sales_query.filter_by(user_id=user.id)
+        if filter_contract_number:
+            sales_query = sales_query.filter(Sale.contract_number.ilike(f"%{filter_contract_number}%"))
+        all_sales = sales_query.all()
 
-        total_vv = sum(sale.quantity for sale in user_sales if sale.class_type == 'VV')
-        total_vr = sum(sale.quantity for sale in user_sales if sale.class_type == 'VR')
-        total_mobiles = sum(sale.quantity for sale in user_sales if sale.class_type == 'Mobiles')
+    # Calcul des totaux pour les cartes
+    total_vv = sum(sale.quantity for sale in all_sales if sale.class_type == 'VV')
+    total_vr = sum(sale.quantity for sale in all_sales if sale.class_type == 'VR')
+    total_mobiles = sum(sale.quantity for sale in all_sales if sale.class_type == 'Mobiles')
 
-        return render_template('layout.html', page='dashboard',
-                               all_sales=user_sales,
-                               total_vv=total_vv,
-                               total_vr=total_vr,
-                               total_mobiles=total_mobiles,
-                               selected_class=selected_class)
+    return render_template(
+        'layout.html',
+        page='dashboard',
+        all_sales=all_sales,
+        total_vv=total_vv,
+        total_vr=total_vr,
+        total_mobiles=total_mobiles,
+        filter_username=filter_username,
+        filter_contract_number=filter_contract_number
+    )
+
+
 
 
 
@@ -261,21 +261,30 @@ def all_sales():
     if 'user_id' not in session or session.get('role') != 'admin':
         return redirect(url_for('login'))
 
-    filter_username = request.form.get('filter_username', None)  # Récupère le filtre s'il existe
-    filter_role = request.form.get('filter_role', None)  # Récupère le filtre par rôle
+    # Récupération des filtres
+    filter_username = request.form.get('filter_username', None)
+    filter_role = request.form.get('filter_role', None)
+    filter_contract_number = request.form.get('filter_contract_number', None)  # Nouveau filtre
 
     query = User.query.filter(User.role != 'admin')  # Exclure les administrateurs
 
+    # Application des filtres
     if filter_username:
-        query = query.filter(User.username.like(f"%{filter_username}%"))  # Filtrer par nom d'utilisateur
+        query = query.filter(User.username.like(f"%{filter_username}%"))
     if filter_role:
-        query = query.filter(User.role == filter_role)  # Filtrer par rôle
+        query = query.filter(User.role == filter_role)
 
     users = query.all()
     user_sales_details = []
 
     for user in users:
-        sales = Sale.query.filter_by(user_id=user.id).all()
+        sales_query = Sale.query.filter_by(user_id=user.id)
+
+        # Application du filtre par Numéro de Contrat
+        if filter_contract_number:
+            sales_query = sales_query.filter(Sale.contract_number.like(f"%{filter_contract_number}%"))
+
+        sales = sales_query.all()
 
         # Calcul des totaux par type
         total_vv = sum(sale.quantity for sale in sales if sale.class_type == 'VV')
@@ -291,15 +300,20 @@ def all_sales():
         })
 
     total_global_sales = sum(detail['total_vv'] + detail['total_vr'] + detail['total_mobiles'] for detail in user_sales_details)
+    total_vv_sales = sum(detail['total_vv'] for detail in user_sales_details)
 
     return render_template(
         'layout.html',
         page='all_sales',
         user_sales_details=user_sales_details,
         total_global_sales=total_global_sales,
+        total_vv_sales=total_vv_sales,
         filter_username=filter_username,
-        filter_role=filter_role
+        filter_role=filter_role,
+
+        filter_contract_number=filter_contract_number  # Inclure le nouveau filtre dans le contexte
     )
+
 
 
 

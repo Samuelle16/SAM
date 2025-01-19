@@ -947,3 +947,14 @@ tr:hover {
 
 
 
+th {
+    cursor: pointer;
+}
+
+th[data-order="asc"]::after {
+    content: " ↑";
+}
+
+th[data-order="desc"]::after {
+    content: " ↓";
+}

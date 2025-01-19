@@ -102,6 +102,22 @@
             </div>
         </div>
         <h2>Sales</h2>
+
+         <form method="POST" action="/dashboard" class="filter-form">
+         <!-- Filtrer par nom d'utilisateur -->
+         <label for="filter-username">Filter by Username:</label>
+         <input type="text" id="filter-username" name="filter_username" value="{{   filter_username or '' }}">
+
+         <!-- Filtrer par numéro de contrat -->
+         <label for="filter-contract-number">Filter by Numéro de Contrat:</label>
+         <input type="text" id="filter-contract-number" name="filter_contract_number"        value="{{ filter_contract_number or '' }}">
+
+             <button type="submit">Apply Filters</button>
+         </form>
+
+
+
+
         <table>
             <thead>
                 <tr>
@@ -129,13 +145,18 @@
 
         {% elif page == 'all_sales' %}
        <h1>All Users and Sales</h1>
-<p>Total Sales (All Users): {{ total_global_sales }}</p>
+<p>Total Sales (All Users): {{ total_vv_sales }}</p>
 
 <!-- Formulaire de filtrage -->
 <form method="POST" action="/admin/all_sales" class="filter-form">
     <label for="filter-username">Filter by Username:</label>
     <input type="text" id="filter-username" name="filter_username" value="{{ filter_username or '' }}">
     
+      <!-- Filter by Numéro de Contrat -->
+    <label for="filter-contract-number">Filter by Numéro de Contrat:</label>
+    <input type="text" id="filter-contract-number" name="filter_contract_number" value="{{ filter_contract_number or '' }}">
+
+
     <label for="filter-role">Filter by Role:</label>
     <select id="filter-role" name="filter_role">
         <option value="">-- Select Role --</option>
@@ -366,8 +387,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+
  </script>
 
+<script>
+    document.querySelector('.filter-form').addEventListener('submit', e => console.log('Form Submitted!'));
+</script>
 
 
 </body>
