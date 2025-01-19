@@ -8,9 +8,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <!-- CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
+     
 </head>
 <body>
+
+ <style>
+        body {
+            background-image: url("{{ url_for('static', filename='images/fond3.jpg') }}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+
+
+
     <!-- Navigation Bar -->
    <div class="sidebar">
         <div class="logo">
@@ -407,7 +422,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    
+
 
 
 </body>

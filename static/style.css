@@ -1171,3 +1171,24 @@ body {
 .flash-message.error {
     background-color: #f44336; /* Rouge pour les erreurs */
 }
+
+
+
+
+
+body {
+    background: linear-gradient(135deg, #000000, #333333); /* Dégradé noir vers gris foncé */
+    background-size: cover; /* Assure que le fond couvre tout l'écran */
+    background-repeat: no-repeat; /* Empêche la répétition du fond */
+    background-attachment: fixed; /* Fixe le fond lors du défilement */
+    background-position: center center; /* Centre le fond */
+    color: white; /* Texte en blanc pour un contraste optimal */
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif; /* Police globale */
+}
+
+
+
+
+
