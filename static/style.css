@@ -731,6 +731,8 @@ body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
 }
 
 /* Container */
@@ -741,16 +743,14 @@ body {
 
 /* Barre de navigation */
 .navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 60px;
-    background-color: #333; /* Couleur de la barre */
+    background-color: #333; /* Noir */
+    padding: 10px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 20px;
+    position: fixed; /* Fixé en haut */
+    top: 0;
+    width: 100%;
     z-index: 1000;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -763,7 +763,8 @@ body {
 }
 
 .navbar .logo img {
-    height: 40px;
+    width: 30px;
+    height: 30px;
 }
 
 /* Menu */
@@ -799,19 +800,50 @@ body {
 
 
 
-/* Barre de navigation */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Navbar */
 .navbar {
-    position: relative; /* Garde le menu relatif à sa position actuelle */
+    background-color: #333; /* Noir */
+    padding: 10px 20px;
     display: flex;
-    justify-content: center; /* Centre le contenu horizontalement */
+    justify-content: space-between;
     align-items: center;
-    background-color: #333; /* Fond noir */
-    padding: 10px;
+    position: fixed; /* Fixé en haut */
+    top: 0;
+    width: 100%;
+    z-index: 1000;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.navbar .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.navbar .logo img {
+    width: 30px;
+    height: 30px;
+}
+
+/* Dropdown */
 .dropdown {
-    position: relative; /* Position relative pour que le menu se place par rapport au bouton */
+    position: relative; /* Position relative pour aligner le menu sous le bouton */
+    margin: 0 auto; /* Centre horizontalement le bouton "Menu" */
 }
 
 .dropdown-toggle {
@@ -831,58 +863,57 @@ body {
 
 .dropdown-menu {
     position: absolute;
-    top: 100%; /* Place le menu sous le bouton */
-    left: 50%; /* Centre horizontalement par défaut */
-    transform: translateX(-50%); /* Ajuste le centrage horizontal */
+    top: calc(100% + 5px); /* Place le menu juste en dessous du bouton */
+    left: 50%; /* Centre le menu horizontalement */
+    transform: translateX(-50%); /* Ajuste pour que le centre du menu soit aligné avec le bouton */
     background-color: #333; /* Fond noir */
     list-style: none;
-    padding: 0;
-    margin: 0;
+    padding: 10px 0;
     border-radius: 5px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre esthétique */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre esthétique */
     overflow-y: auto; /* Permet le défilement vertical si nécessaire */
     max-height: 300px; /* Limite la hauteur du menu */
-    min-width: 250px; /* Largeur minimale */
+    min-width: 300px; /* Largeur minimale du menu */
     z-index: 1000;
     display: none; /* Caché par défaut */
     opacity: 0;
-    pointer-events: none; /* Désactive les interactions */
-    transition: opacity 0.3s ease;
-    word-wrap: break-word; /* Permet de couper les mots longs */
-    box-sizing: border-box; /* Assure que padding/margin ne font pas dépasser la largeur */
+    pointer-events: none; /* Désactive les interactions par défaut */
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-/* Empêche le menu de sortir du cadre */
 .dropdown-menu.show {
-    display: block;
-    opacity: 1;
-    pointer-events: auto;
-    max-width: calc(100vw - 20px); /* Ne dépasse pas l'écran */
-    left: auto;
-    right: 10px; /* Ajuste le menu pour qu'il reste dans le cadre */
+    display: block; /* Affiche le menu */
+    opacity: 1; /* Visible */
+    pointer-events: auto; /* Active les interactions */
 }
 
-/* Liens dans le menu */
+.dropdown-menu li {
+    text-align: left; /* Alignement des options à gauche */
+    padding: 0;
+}
+
 .dropdown-menu li a {
-    display: block;
+    display: block; /* Chaque lien occupe toute la largeur */
+    padding: 10px 20px;
     color: white;
     text-decoration: none;
-    padding: 10px 20px;
     font-size: 1rem;
     transition: background-color 0.3s ease;
-    white-space: nowrap; /* Empêche le texte de passer à la ligne */
-    overflow: hidden; /* Cache tout débordement */
-    text-overflow: ellipsis; /* Ajoute des points de suspension pour les textes longs */
 }
 
-/* Survol des liens */
 .dropdown-menu li a:hover {
     background-color: #555; /* Fond gris clair au survol */
 }
 
-
-
-
+/* Responsive styles */
+@media (max-width: 768px) {
+    .dropdown-menu {
+        left: 10px; /* Légèrement décalé à gauche sur mobile */
+        right: 10px; /* Légèrement décalé à droite sur mobile */
+        transform: none; /* Pas besoin de transformation */
+        max-width: none; /* Pas de limite de largeur sur mobile */
+    }
+}
 
 
 
