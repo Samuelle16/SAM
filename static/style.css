@@ -958,3 +958,191 @@ th[data-order="asc"]::after {
 th[data-order="desc"]::after {
     content: " ↓";
 }
+
+
+
+
+
+
+
+/* Global Styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: #333; /* Fond noir */
+    position: fixed;
+    top: 0;
+    right: 0; /* Toujours visible sur les grands écrans */
+    transition: left 0.3s ease;
+    color: white;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar.hidden {
+    right: -250px; /* Masqué sur mobile */
+}
+
+.sidebar .logo {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #444;
+}
+
+.sidebar .logo img {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.sidebar .logo span {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffcc00; /* Jaune doré */
+}
+
+.sidebar .menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sidebar .menu li a {
+    display: block;
+    padding: 15px 20px;
+    text-decoration: none;
+    color: white;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar .menu li a:hover {
+    background-color: #555;
+    color: #ffcc00; /* Jaune doré au survol */
+}
+
+/* Menu Icon */
+.menu-icon {
+    display: none; /* Caché sur PC */
+    font-size: 2rem;
+    color: #ffcc00;;
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+    z-index: 1100;
+}
+
+/* Main Content */
+.main-content {
+    margin-right: 250px; /* Décalage pour laisser de la place à la sidebar */
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+}
+
+.sidebar.hidden + .main-content {
+    margin-right: 0; /* Pas de décalage lorsque la sidebar est masquée */
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .menu-icon {
+        display: block; /* Affiché sur mobile */
+    }
+
+    .sidebar {
+        right: -250px; /* Masqué par défaut sur mobile */
+    }
+
+    .sidebar.active {
+        right: 0; /* Affiché lorsque la classe active est ajoutée */
+    }
+
+    .main-content {
+        margin-right: 0; /* Pas de marge par défaut sur mobile */
+    }
+
+    .sidebar.active + .main-content {
+        margin-right: 250px; /* Décalage lorsque la sidebar est visible */
+    }
+}
+
+
+
+
+
+
+
+/* Style du logo et du texte "OCF" */
+.sidebar .logo {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #444, #222); /* Dégradé élégant */
+    border-bottom: 1px solid #555; /* Ligne séparatrice subtile */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre légère */
+}
+
+.sidebar .logo img {
+    width: 50px; /* Taille légèrement agrandie pour plus d'impact */
+    height: 50px;
+    border-radius: 50%; /* Rend l'image circulaire */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Ajout d'une ombre pour donner de la profondeur */
+    margin-right: 15px;
+    border: 2px solid #ffcc00; /* Ajout d'une bordure jaune dorée */
+}
+
+.sidebar .logo span {
+    font-size: 2rem; /* Texte plus grand pour plus d'impact */
+    font-weight: bold;
+    color: #ffcc00; /* Couleur jaune dorée */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Effet d'ombre pour plus de profondeur */
+    font-family: 'Poppins', sans-serif; /* Une police moderne et élégante */
+    letter-spacing: 2px; /* Espacement des lettres pour un style moderne */
+    animation: fadeIn 1s ease-in-out; /* Animation pour rendre le logo plus dynamique */
+}
+
+/* Animation d'apparition du logo */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+
+
+.sidebar .logo img:hover {
+    transform: scale(1.1); /* Agrandit légèrement le logo */
+    transition: transform 0.3s ease;
+}
+
+.sidebar .logo span:hover {
+    color: #ffffff; /* Change la couleur au survol */
+    transition: color 0.3s ease;
+}
+
+
+
+
+
+
+
+
