@@ -1282,3 +1282,110 @@ tr:hover {
 
 
 
+
+/* Style général pour les h1 */
+h1 {
+    font-size: 2.5rem; /* Taille de la police */
+    font-weight: bold; /* Texte en gras */
+    text-align: center; /* Centré */
+    margin: 20px 0; /* Espacement */
+    color: #ffffff; /* Texte blanc */
+    background: linear-gradient(135deg, #1a1a1a, #4a4a4a); /* Dégradé sombre */
+    -webkit-background-clip: text; /* Clip le texte dans le dégradé */
+    -webkit-text-fill-color: transparent; /* Fond transparent pour voir le dégradé */
+    text-transform: uppercase; /* Majuscules */
+    letter-spacing: 3px; /* Espacement entre les lettres */
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5); /* Ombre sombre */
+    position: relative; /* Nécessaire pour le pseudo-élément */
+}
+
+/* Effet soulignement dynamique */
+h1::after {
+    content: ''; /* Soulignement */
+    display: block;
+    width: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #333, #777); /* Ligne avec dégradé sombre */
+    margin: 10px auto 0; /* Centré sous le texte */
+    transition: width 0.5s ease-in-out;
+}
+
+h1:hover::after {
+    width: 100%; /* Ligne s'étend au survol */
+}
+
+/* Animation subtile */
+h1 {
+    animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Adaptation pour mobile */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2rem; /* Taille réduite */
+        letter-spacing: 2px; /* Moins d'espacement entre lettres */
+    }
+}
+
+
+
+
+
+
+/* Style audacieux pour les titres des catégories */
+.category-title {
+    font-size: 2.5rem; /* Texte grand et imposant */
+    font-weight: 800; /* Gras intense */
+    color: #333; /* Couleur sombre pour le contraste */
+    text-transform: uppercase; /* Texte en majuscules */
+    letter-spacing: 2px; /* Espacement large des lettres */
+    background: linear-gradient(90deg, #ffcc00, #b8860b); /* Dégradé doré : jaune doré vers bronze */
+    -webkit-background-clip: text; /* Utiliser le dégradé uniquement pour le texte */
+    -webkit-text-fill-color: transparent; /* Texte transparent avec dégradé */
+    text-align: center; /* Centré */
+    margin: 30px auto; /* Centrage avec espacement vertical */
+    padding: 10px 20px; /* Ajout d’espace autour */
+    position: relative; /* Nécessaire pour les effets décoratifs */
+}
+
+/* Ligne décorative sous le titre */
+.category-title::after {
+    content: "";
+    display: block;
+    width: 60%; /* Largeur ajustable */
+    height: 4px; /* Épaisseur de la ligne */
+    background: linear-gradient(90deg, #b8860b, #ffcc00); /* Dégradé inversé pour la ligne */
+    margin: 10px auto; /* Centrer la ligne sous le titre */
+    border-radius: 2px; /* Arrondi subtil */
+}
+
+/* Effet de "brillance" au survol */
+.category-title:hover {
+    background: linear-gradient(90deg, #b8860b, #ffcc00); /* Dégradé inversé au survol */
+    -webkit-background-clip: text;
+    transform: scale(1.05); /* Agrandissement léger */
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+/* Effet responsive */
+@media (max-width: 768px) {
+    .category-title {
+        font-size: 1.8rem; /* Réduction de la taille du texte */
+        padding: 8px 15px;
+    }
+
+    .category-title::after {
+        width: 80%; /* Ligne plus large sur mobile */
+    }
+}
