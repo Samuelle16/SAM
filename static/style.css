@@ -1222,3 +1222,63 @@ body {
 .filter-form button:hover {
     background-color: #555; /* Fond au survol */
 }
+
+
+
+
+
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #1a1a1a; /* Couleur de fond sombre pour la table */
+    border-radius: 10px; /* Coins arrondis */
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre autour de la table */
+}
+
+th {
+    font-family: 'Poppins', sans-serif; /* Police moderne */
+    font-weight: 600; /* Texte en gras */
+    font-size: 1.2rem; /* Taille du texte */
+    color: #ffcc00; /* Texte jaune doré */
+    text-transform: capitalize; /* Première lettre en majuscule */
+    text-align: left; /* Alignement à gauche */
+    background: linear-gradient(135deg, #333, #555); /* Dégradé moderne */
+    padding: 15px; /* Espacement interne */
+    border-bottom: 2px solid #444; /* Ligne en bas des en-têtes */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Effet d'ombre */
+    transition: all 0.3s ease; /* Animation douce */
+}
+
+th:hover {
+    background: #666; /* Change le fond au survol */
+    color: #fff; /* Change la couleur du texte au survol */
+    transform: scale(1.05); /* Légère augmentation de taille */
+}
+
+
+td {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem; /* Taille légèrement plus petite */
+    color: #ddd; /* Texte gris clair */
+    padding: 12px 15px; /* Espacement interne */
+    border-bottom: 1px solid #333; /* Ligne en bas des cellules */
+}
+
+tr:nth-child(even) {
+    background-color: #2a2a2a; /* Couleur de fond pour les lignes paires */
+}
+
+tr:hover {
+    background-color: #444; /* Fond au survol */
+    color: #fff; /* Texte blanc au survol */
+}
+
+
+
+
+
+

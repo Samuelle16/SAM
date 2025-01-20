@@ -106,17 +106,17 @@
         <h1>Dashboard</h1>
         <div class="totals-container">
             <div class="card total-vv">
-                <h2>Total VV Sales</h2>
+                <h2>Total VV</h2>
                 <p class="total-number">{{ total_vv }}</p>
                 <p>VV sales generated so far</p>
             </div>
             <div class="card total-vr">
-                <h2>Total VR Sales</h2>
+                <h2>Total VR</h2>
                 <p class="total-number">{{ total_vr }}</p>
                 <p>VR sales generated so far</p>
             </div>
             <div class="card total-mobiles">
-                <h2>Total Mobile Sales</h2>
+                <h2>Total Mobiles</h2>
                 <p class="total-number">{{ total_mobiles }}</p>
                 <p>Mobile sales generated so far</p>
             </div>
@@ -165,7 +165,7 @@
 
         {% elif page == 'all_sales' %}
        <h1>All Users and Sales</h1>
-<p>Total Sales (All Users): {{ total_vv_sales }}</p>
+<!--Ce code forme un paragraphe <p>Total Sales (All Users): {{ total_vv_sales }}</p> -->
 
 <!-- Formulaire de filtrage -->
 <form method="POST" action="/admin/all_sales" class="filter-form">
