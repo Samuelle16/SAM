@@ -57,7 +57,7 @@
      
     <!-- Menu Icon -->
     <div class="menu-icon" id="menu-toggle">☰</div>
-    
+
     {% endif %}
   
 
@@ -76,6 +76,16 @@
                 <button type="submit">Login</button>
             </form>
         </div>
+
+
+
+         <audio autoplay loop>
+          <source src="{{ url_for('static', filename='audio/background-audio.mp3') }}" type="audio/mpeg">
+         Your browser does not support the audio element.
+         </audio>
+         
+
+
 
         {% elif page == 'create_user' %}
         <h1>Créer utilisateur</h1>
