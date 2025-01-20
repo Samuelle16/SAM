@@ -3,6 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import pandas as pd
+from flask import send_file
+import openpyxl
+from io import BytesIO
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -16,6 +19,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
+    plain_password = db.Column(db.String(200), nullable=True)  # Stockage en clair (temporaire)
     role = db.Column(db.String(20), default='user')  # user or admin
     sales = db.relationship('Sale', backref='user', lazy=True)
 
@@ -141,6 +145,10 @@ def create_user():
 
     return render_template('layout.html', page='create_user')
 
+import string
+import random
+from werkzeug.security import generate_password_hash
+
 @app.route('/admin/upload_sales', methods=['GET', 'POST'])
 def upload_sales():
     if 'user_id' not in session or session.get('role') != 'admin':
@@ -177,23 +185,28 @@ def upload_sales():
             quantity = int(row['Quantité'])
             class_type = row['Class']  # Classe (VR, VV, etc.)
             contract_number = str(row['Numéro de contrat'])  # Numéro de contrat
-            
 
             user = User.query.filter_by(username=username).first()
+
             if not user:
-                user = User(username=username, password=generate_password_hash('default_password', method='pbkdf2:sha256'), role='user')
+                # Générer un mot de passe aléatoire pour les nouveaux utilisateurs
+                plain_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+                hashed_password = generate_password_hash(plain_password, method='pbkdf2:sha256')
+
+                # Créer un nouvel utilisateur
+                user = User(username=username, password=hashed_password, plain_password=plain_password, role='user')
                 db.session.add(user)
                 db.session.commit()
 
+            # Créer une nouvelle vente associée à l'utilisateur
             new_sale = Sale(
-                date='2023-01-01',
+                date=datetime.now().strftime('%Y-%m-%d'),  # Vous pouvez modifier cette date
                 offer_type=offer_type,
                 plan=plan,
                 quantity=quantity,
                 user_id=user.id,
                 class_type=class_type,
                 contract_number=contract_number,
-                
             )
             db.session.add(new_sale)
 
@@ -201,6 +214,43 @@ def upload_sales():
         return "Sales uploaded successfully!"
 
     return render_template('layout.html', page='upload_sales')
+
+
+@app.route('/admin/export_users', methods=['GET'])
+def export_users():
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect(url_for('login'))
+
+    # Créer un classeur Excel
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+    sheet.title = "Users and Passwords"
+
+    # Ajouter les en-têtes
+    sheet.append(["Username", "Password"])
+
+    # Récupérer tous les utilisateurs (sauf admin)
+    users = User.query.filter(User.role != 'admin').all()
+
+    # Ajouter les données des utilisateurs dans le fichier Excel
+    for user in users:
+        # Utiliser plain_password pour exporter les mots de passe en clair
+        sheet.append([user.username, user.plain_password or "N/A"])
+
+    # Sauvegarder le fichier Excel dans un flux en mémoire
+    output = BytesIO()
+    workbook.save(output)
+    output.seek(0)
+
+    # Retourner le fichier Excel au client
+    return send_file(
+        output,
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        as_attachment=True,
+        download_name='users_and_passwords.xlsx'
+    )
+
+
 
 
 @app.route('/admin/sales_ranking')

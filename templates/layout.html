@@ -102,6 +102,12 @@
             <button type="submit">Upload</button>
         </form>
 
+
+        <!-- Bouton pour exporter les utilisateurs et leurs mots de passe -->
+        <form method="GET" action="/admin/export_users">
+             <button type="submit">Export Users and Passwords</button>
+        </form>
+
         {% elif page == 'dashboard' %}
         <h1>Dashboard</h1>
         <div class="totals-container">
