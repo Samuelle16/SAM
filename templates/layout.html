@@ -27,6 +27,7 @@
 
 
     <!-- Navigation Bar -->
+    {% if page != 'login' %}
    <div class="sidebar">
         <div class="logo">
             <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="OCF Logo">
@@ -53,10 +54,11 @@
         {% endif %}
     </ul>
     </div>
-
+     
     <!-- Menu Icon -->
     <div class="menu-icon" id="menu-toggle">☰</div>
-
+    
+    {% endif %}
   
 
 
@@ -425,17 +427,26 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('.filter-form').addEventListener('submit', e => console.log('Form Submitted!'));
 </script>
 
- <script>
-        // Script to toggle sidebar
-        document.addEventListener('DOMContentLoaded', () => {
-            const menuToggle = document.getElementById('menu-toggle');
-            const sidebar = document.querySelector('.sidebar');
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const menuToggle = document.getElementById('menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
 
-            menuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('active');
-            });
+        // Toggle sidebar when the menu icon is clicked
+        menuToggle.addEventListener('click', (event) => {
+            event.stopPropagation(); // Empêche la propagation pour que le clic sur le bouton ne ferme pas le menu
+            sidebar.classList.toggle('active');
         });
-    </script>
+
+        // Close sidebar when clicking outside of it
+        document.addEventListener('click', (event) => {
+            if (!sidebar.contains(event.target) && !menuToggle.contains(event.target)) {
+                sidebar.classList.remove('active');
+            }
+        });
+    });
+</script>
+
 
 
 

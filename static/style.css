@@ -1397,3 +1397,29 @@ h1 {
 
 
 
+
+.menu-icon {
+    display: block; /* Toujours afficher l'icône du menu */
+    font-size: 2rem; /* Ajustez la taille */
+    color: #ffcc00;
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+    z-index: 1100;
+}
+
+.sidebar {
+    right: -250px; /* Par défaut, masquez la barre latérale */
+    transition: all 0.3s ease;
+}
+
+.sidebar.active {
+    right: 0; /* Montrez la barre latérale lorsqu'elle est active */
+}
+
+@media (max-width: 768px) {
+    .menu-icon {
+        font-size: 1.5rem; /* Réduisez légèrement sur les petits écrans */
+    }
+}
