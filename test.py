@@ -42,6 +42,7 @@ class ArchivedSale(db.Model):
     plan = db.Column(db.String(100), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, nullable=False)
+    contract_number = db.Column(db.String(50), nullable=False)
     archived_at = db.Column(db.DateTime, nullable=False)
 
 @app.before_request
@@ -171,6 +172,7 @@ def upload_sales():
                 plan=sale.plan,
                 quantity=sale.quantity,
                 user_id=sale.user_id,
+                contract_number=sale.contract_number,
                 archived_at=datetime.now()
             )
             db.session.add(archived_sale)
@@ -318,14 +320,26 @@ def delete_archives():
 
 @app.route('/admin/view_archives')
 def view_archives():
-    print("Accessing Archived Sales page...")  # Log
     if 'user_id' not in session or session.get('role') != 'admin':
-        print("Unauthorized access!")  # Log
         return redirect(url_for('login'))
 
-    archives = ArchivedSale.query.order_by(ArchivedSale.archived_at.desc()).all()
-    print(f"Archives retrieved: {archives}")  # Log
-    return render_template('layout.html', page='view_archives', archives=archives)
+    archives = ArchivedSale.query.all()
+    enriched_archives = []
+
+    for archive in archives:
+        user = User.query.get(archive.user_id)
+        enriched_archives.append({
+            'username': user.username if user else 'Unknown',
+            'date': archive.date,
+            'offer_type': archive.offer_type,
+            'plan': archive.plan,
+            'quantity': archive.quantity,
+            'contract_number': archive.contract_number,
+            'archived_at': archive.archived_at
+        })
+
+    return render_template('layout.html', page='view_archives', archives=enriched_archives)
+
 
 
 @app.route('/admin/all_sales', methods=['GET', 'POST'])

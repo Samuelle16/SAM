@@ -35,17 +35,17 @@
         <ul class="menu">
         {% if session.get('role') == 'admin' %}
         <!-- Menu pour les administrateurs -->
-        <li><a href="/dashboard">Dashboard</a></li>
-        <li><a href="/admin/create_user">Add User</a></li>
-        <li><a href="/admin/upload_sales">Upload Sales</a></li>
-        <li><a href="/admin/all_sales">All Users & Sales</a></li>
-        <li><a href="/admin/sales_ranking">Sales Ranking</a></li>
-        <li><a href="/admin/view_archives">Archived Sales</a></li>
-        <li><a href="/admin/set_password">Set Password</a></li>
+        <li><a href="/dashboard">Tableau de Bord</a></li>
+        <li><a href="/admin/all_sales">Vendeurs</a></li>
+        <li><a href="/admin/sales_ranking">Classement Vendeur</a></li>
+        <li><a href="/admin/view_archives">Archives</a></li>
+        <li><a href="/admin/upload_sales">Mise à jour des ventes</a></li>
+        <li><a href="/admin/create_user">Ajout utilisateur</a></li>
+        <li><a href="/admin/set_password">renitialiser mot de passe</a></li>
         <li><a href="/logout">Logout</a></li>
         {% elif session.get('role') == 'user' %}
         <!-- Menu pour les utilisateurs -->
-        <li><a href="/dashboard">Dashboard</a></li>
+        <li><a href="/dashboard">Tableau de Bord</a></li>
         <li><a href="/logout">Logout</a></li>
         {% else %}
         <!-- Menu par défaut -->
@@ -64,19 +64,19 @@
     <div class="container">
         {% if page == 'login' %}
         <div class="form-container">
-            <h1 class="main-title gradient">Welcome to OCF</h1>
+            <h1 class="main-title gradient">Bienvenue chez OCF</h1>
             {% if error %}
             <p class="error">{{ error }}</p>
             {% endif %}
             <form method="POST" action="/login">
-                <input type="text" name="username" placeholder="Enter your username" required>
-                <input type="password" name="password" placeholder="Enter your password" required>
+                <input type="text" name="username" placeholder="Entrer votre nom utilisateur" required>
+                <input type="password" name="password" placeholder="Entrer votre mot de passe" required>
                 <button type="submit">Login</button>
             </form>
         </div>
 
         {% elif page == 'create_user' %}
-        <h1>Create a New User</h1>
+        <h1>Créer utilisateur</h1>
         {% if error %}
         <p class="error">{{ error }}</p>
         {% endif %}
@@ -84,13 +84,13 @@
         <p class="success">{{ success }}</p>
         {% endif %}
         <form method="POST" action="/admin/create_user">
-            <input type="text" name="username" placeholder="Enter username" required>
-            <input type="password" name="password" placeholder="Enter password" required>
-            <button type="submit">Create User</button>
+            <input type="text" name="username" placeholder="Entrer l'utilisateur" required>
+            <input type="password" name="password" placeholder="Entrer le mot de passe" required>
+            <button type="submit">Créer utilisateur</button>
         </form>
 
         {% elif page == 'upload_sales' %}
-        <h1>Upload Sales</h1>
+        <h1>Mettre à jour le Tableau</h1>
         {% if error %}
         <p class="error">{{ error }}</p>
         {% endif %}
@@ -99,46 +99,46 @@
         {% endif %}
         <form method="POST" enctype="multipart/form-data" action="/admin/upload_sales">
             <input type="file" name="file" accept=".xlsx" required>
-            <button type="submit">Upload</button>
+            <button type="submit">Charger</button>
         </form>
 
 
         <!-- Bouton pour exporter les utilisateurs et leurs mots de passe -->
         <form method="GET" action="/admin/export_users">
-             <button type="submit">Export Users and Passwords</button>
+             <button type="submit">Exporter les données et mots de passe utilisateurs</button>
         </form>
 
         {% elif page == 'dashboard' %}
-        <h1>Dashboard</h1>
+        <h1>Tableau de Bord</h1>
         <div class="totals-container">
             <div class="card total-vv">
                 <h2>Total VV</h2>
                 <p class="total-number">{{ total_vv }}</p>
-                <p>VV sales generated so far</p>
+                
             </div>
             <div class="card total-vr">
                 <h2>Total VR</h2>
                 <p class="total-number">{{ total_vr }}</p>
-                <p>VR sales generated so far</p>
+               
             </div>
             <div class="card total-mobiles">
                 <h2>Total Mobiles</h2>
                 <p class="total-number">{{ total_mobiles }}</p>
-                <p>Mobile sales generated so far</p>
+                
             </div>
         </div>
 
 
          <form method="POST" action="/dashboard" class="filter-form">
          <!-- Filtrer par nom d'utilisateur -->
-         <label for="filter-username">Filter by Username:</label>
+         <label for="filter-username">Filtrer par Nom:</label>
          <input type="text" id="filter-username" name="filter_username" value="{{   filter_username or '' }}">
 
          <!-- Filtrer par numéro de contrat -->
-         <label for="filter-contract-number">Filter by Numéro de Contrat:</label>
+         <label for="filter-contract-number">Filtrer par Numéro de contrat:</label>
          <input type="text" id="filter-contract-number" name="filter_contract_number"        value="{{ filter_contract_number or '' }}">
 
-             <button type="submit">Apply Filters</button>
+             <button type="submit">Appliquer</button>
          </form>
 
 
@@ -147,11 +147,11 @@
         <table>
             <thead>
                 <tr>
-                    <th>Username</th>
-                    <th>Offer Type</th>
-                    <th>Plan</th>
+                    <th>Vendeur</th>
+                    <th>Catégorie</th>
+                    <th>Offre</th>
                     <th>Quantité</th>
-                    <th>Class</th>
+                    <th>Type</th>
                     <th>Numéro de contrat</th>
                 </tr>
             </thead>
@@ -170,27 +170,23 @@
         </table>
 
         {% elif page == 'all_sales' %}
-       <h1>All Users and Sales</h1>
+       <h1>Vendeurs</h1>
 <!--Ce code forme un paragraphe <p>Total Sales (All Users): {{ total_vv_sales }}</p> -->
 
 <!-- Formulaire de filtrage -->
 <form method="POST" action="/admin/all_sales" class="filter-form">
-    <label for="filter-username">Filter by Username:</label>
+    <label for="filter-username">Filter par Nom:</label>
     <input type="text" id="filter-username" name="filter_username" value="{{ filter_username or '' }}">
     
       <!-- Filter by Numéro de Contrat -->
-    <label for="filter-contract-number">Filter by Numéro de Contrat:</label>
+    <label for="filter-contract-number">Filter par Numéro de Contrat:</label>
     <input type="text" id="filter-contract-number" name="filter_contract_number" value="{{ filter_contract_number or '' }}">
 
 
-    <label for="filter-role">Filter by Role:</label>
-    <select id="filter-role" name="filter_role">
-        <option value="">-- Select Role --</option>
-        <option value="user" {% if filter_role == 'user' %}selected{% endif %}>User</option>
-        <option value="manager" {% if filter_role == 'manager' %}selected{% endif %}>Manager</option>
-    </select>
+    <label for="filter-role">Filtrer par role:</label>
+  
 
-    <button type="submit">Apply Filters</button>
+    <button type="submit">Appliquer</button>
 </form>
 
 <!-- Affichage des ventes -->
@@ -199,7 +195,6 @@
 <div class="table-container">
 <div class="user-sales">
     <h2>{{ detail.user.username }}</h2>
-    <p>Role: {{ detail.user.role }}</p>
 
     <div class="totals">
         <div class="total-box">
@@ -214,10 +209,7 @@
             <h3>Total Mobiles</h3>
             <p class="number">{{ detail.total_mobiles }}</p>
         </div>
-        <div class="total-box total-sales">
-            <h3>Total Sales</h3>
-            <p class="number">{{ detail.total_vv + detail.total_vr + detail.total_mobiles }}</p>
-        </div>
+       
     </div>
 
     <h3>Détails des ventes :</h3>
@@ -225,10 +217,10 @@
         <thead>
             <tr>
                 <th>Date</th>
-                <th>Type d'offre</th>
-                <th>Plan</th>
+                <th>Catégorie</th>
+                <th>Offre</th>
                 <th>Quantité</th>
-                <th>Classe</th>
+                <th>Type</th>
                 <th>Numéro de contrat</th>
             </tr>
         </thead>
@@ -254,14 +246,14 @@
 
 
         {% elif page == 'sales_ranking' %}
-        <h1>Sales Ranking</h1>
+        <h1>Classement Vendeur</h1>
 
          <h2 class="category-title">VR</h2>
         <table>
             <thead>
                 <tr>
-                    <th>Rank</th>
-                    <th>Username</th>
+                    <th>Rang</th>
+                    <th>Vendeur</th>
                     <th>Role</th>
                     <th>Total Quantité</th>
                 </tr>
@@ -282,8 +274,8 @@
         <table>
             <thead>
                 <tr>
-                    <th>Rank</th>
-                    <th>Username</th>
+                    <th>Rang</th>
+                    <th>Vendeur</th>
                     <th>Role</th>
                     <th>Total Quantité</th>
                 </tr>
@@ -305,8 +297,8 @@
         <table>
             <thead>
                 <tr>
-                    <th>Rank</th>
-                    <th>Username</th>
+                    <th>Rang</th>
+                    <th>Vendeur</th>
                     <th>Role</th>
                     <th>Total Quantité</th>
                 </tr>
@@ -324,26 +316,33 @@
         </table>
 
         {% elif page == 'view_archives' %}
-      <h1>Archived Sales</h1>
+
+<div class="table-container">
+<h1 class="page-title">Archives</h1>
+
+
 {% if archives %}
 <form method="POST" action="/admin/delete_archives" onsubmit="return confirm('Are you sure you want to delete all archives?');">
-    <button type="submit" class="delete-button">Delete All Archives</button>
+    <button type="submit" class="delete-button">
+    Supprimer les archives</button>
 </form>
 
 <table>
     <thead>
         <tr>
+            <th>Vendeur</th>
             <th>Date</th>
-            <th>Offer Type</th>
-            <th>Plan</th>
+            <th>Catégorie</th>
+            <th>Offre</th>
             <th>Quantité</th>
             <th>Numéro de contrat</th>
-            <th>Archived At</th>
+            <th>Archivés le</th>
         </tr>
     </thead>
     <tbody>
         {% for archive in archives %}
         <tr>
+            <td>{{ archive.username }}</td>
             <td>{{ archive.date }}</td>
             <td>{{ archive.offer_type }}</td>
             <td>{{ archive.plan }}</td>
@@ -355,7 +354,7 @@
     </tbody>
 </table>
 {% else %}
-<p>No archived sales available.</p>
+<p>Aucun fichier archivé.</p>
         {% endif %}
         {% endif %}
     </div>
