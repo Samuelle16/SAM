@@ -26,16 +26,19 @@ body {
 }
 
 .navbar .logo {
-    display: flex;
-    align-items: center;
-    white-space: nowrap; /* Empêche le texte du logo de se déborder */
+    align-items: flex-start; /* Alignement haut */
+    justify-content: center; /* Centrage horizontal */
 }
 
+
 .navbar .logo img {
-    width: 30px; /* Taille ajustée du logo */
-    height: 30px;
-    margin-right: 10px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Transforme en cercle */
+    border: 2px solid #ccc; /* Ajoute une bordure */
 }
+
+
 
 .navbar ul {
     list-style: none;
@@ -1500,3 +1503,7 @@ h1 {
     overflow-x: auto; /* Activer le défilement horizontal */
     -webkit-overflow-scrolling: touch; /* Permet un défilement fluide sur mobile */
 }
+
+
+
+
