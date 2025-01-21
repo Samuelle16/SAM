@@ -1494,3 +1494,9 @@ h1 {
 }
 
 
+
+
+.user-sales {
+    overflow-x: auto; /* Activer le défilement horizontal */
+    -webkit-overflow-scrolling: touch; /* Permet un défilement fluide sur mobile */
+}
