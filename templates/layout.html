@@ -78,23 +78,27 @@
         {% if page == 'login' %}
         <div class="form-container">
 
-             <div id="audio-prompt" style="text-align: center; margin-top: 20px;">
-           <button id="audio-button" style="background: none; border: none; cursor: pointer;">
-           <i id="audio-icon" class="fas fa-volume-mute" style="font-size: 40px; color: #ffcc00;"></i>
-           </button>
-        
-           </div>
-
-          <audio id="background-audio" loop>
-          <source src="{{ url_for('static', filename='audio/background-audio.mp3') }}" type= "audio/mpeg">
-            Your browser does not support the audio element.
-         </audio>
+           
+           <audio id="background-audio" loop>
+              <source src="{{ url_for('static', filename='audio/background-audio.mp3') }}" type="audio/mpeg">
+              Your browser does not support the audio element.
+           </audio>
 
 
-            <h1 class="main-title gradient">Bienvenue chez OCF</h1>
+          <h1 class="main-title gradient">
+           Bienvenue chez OCF
+            <a href="#" class="audio-toggle" title="Activer/Désactiver le son">
+            <i class="fas fa-volume-up"></i>
+            </a>
+          </h1>
+
             {% if error %}
             <p class="error">{{ error }}</p>
             {% endif %}
+
+           
+
+
             <form method="POST" action="/login">
                 <input type="text" name="username" placeholder="Entrer votre nom utilisateur" required>
                 <input type="password" name="password" placeholder="Entrer votre mot de passe" required>
@@ -484,25 +488,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const audio = document.getElementById('background-audio');
-        const audioButton = document.getElementById('audio-button');
-        const audioIcon = document.getElementById('audio-icon');
+    document.addEventListener("DOMContentLoaded", () => {
+        const audioElement = document.querySelector("audio");
+        const audioToggle = document.querySelector(".audio-toggle");
+        const audioIcon = audioToggle.querySelector("i");
 
-        // Activer la musique lorsque l'utilisateur clique sur l'icône
-        audioButton.addEventListener('click', () => {
-            if (audio.paused) {
-                audio.play();
-                audioIcon.classList.remove('fa-volume-mute');
-                audioIcon.classList.add('fa-volume-up');
+        audioToggle.addEventListener("click", (event) => {
+            event.preventDefault();
+
+            if (audioElement.paused) {
+                audioElement.play();
+                audioIcon.classList.remove("fa-volume-mute");
+                audioIcon.classList.add("fa-volume-up");
             } else {
-                audio.pause();
-                audioIcon.classList.remove('fa-volume-up');
-                audioIcon.classList.add('fa-volume-mute');
+                audioElement.pause();
+                audioIcon.classList.remove("fa-volume-up");
+                audioIcon.classList.add("fa-volume-mute");
             }
         });
     });
 </script>
+
 
 
 
