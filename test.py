@@ -33,6 +33,9 @@ class Sale(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     class_type = db.Column(db.String(20), nullable=False)  # Ajout de la colonne classe
     contract_number = db.Column(db.String(50), nullable=False)  # Numéro de contrat
+    date_rdv = db.Column(db.String(10), nullable=True)  # Nouvelle colonne Date RDV
+    date_raccordement = db.Column(db.String(10), nullable=True)  # Nouvelle colonne Date Raccordement
+    client_name = db.Column(db.String(100), nullable=True)  # Nouvelle colonne Nom Client
 
 # Archived Sale model
 class ArchivedSale(db.Model):
@@ -44,6 +47,9 @@ class ArchivedSale(db.Model):
     user_id = db.Column(db.Integer, nullable=False)
     contract_number = db.Column(db.String(50), nullable=False)
     archived_at = db.Column(db.DateTime, nullable=False)
+    date_rdv = db.Column(db.String(10), nullable=True)  # Nouvelle colonne Date RDV
+    date_raccordement = db.Column(db.String(10), nullable=True)  # Nouvelle colonne Date Raccordement
+    client_name = db.Column(db.String(100), nullable=True)  # Nouvelle colonne Nom Client
 
 @app.before_request
 def restrict_access():
@@ -109,18 +115,6 @@ def dashboard():
     total_vr = sum(sale.quantity for sale in all_sales if sale.class_type == 'VR')
     total_mobiles = sum(sale.quantity for sale in all_sales if sale.class_type == 'Mobiles')
 
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        return render_template(
-            'dashboard.html',  # Page sans layout
-            all_sales=all_sales,
-            total_vv=total_vv,
-            total_vr=total_vr,
-            total_mobiles=total_mobiles,
-            filter_username=filter_username,
-            filter_contract_number=filter_contract_number
-        )
-
-
     return render_template(
         'layout.html',
         page='dashboard',
@@ -185,6 +179,9 @@ def upload_sales():
                 quantity=sale.quantity,
                 user_id=sale.user_id,
                 contract_number=sale.contract_number,
+                date_rdv=sale.date_rdv,
+                date_raccordement=sale.date_raccordement,
+                client_name=sale.client_name,
                 archived_at=datetime.now()
             )
             db.session.add(archived_sale)
@@ -193,16 +190,26 @@ def upload_sales():
 
         # Insérer les nouvelles données
         for index, row in data.iterrows():
-            username = row['Nom Prénom']
-            offer_type = row['Type (Box ou Mobile)']
-            plan = row['Plan (ULTYM, MUST, 130Go, 20Go)']
-            quantity = int(row['Quantité'])
-            class_type = row['Class']  # Classe (VR, VV, etc.)
-            contract_number = str(row['Numéro de contrat'])  # Numéro de contrat
+           username = row['Nom Prénom']
+           offer_type = row['Type (Box ou Mobile)']
+           plan = row['Plan (ULTYM, MUST, 130Go, 20Go)']
+           quantity = int(row['Quantité']) if pd.notnull(row['Quantité']) else ''
+           class_type = row['Class'] if pd.notnull(row['Class']) else ''
+           contract_number = str(row['Numéro de contrat']) if pd.notnull(row['Numéro de contrat']) else ''
+           date_rdv = row['Date RDV'] if pd.notnull(row['Date RDV']) else ''
+           date_raccordement = row['Date Raccordement'] if pd.notnull(row['Date Raccordement']) else ''
+           client_name = row['Nom Client'] if pd.notnull(row['Nom Client']) else ''
 
-            user = User.query.filter_by(username=username).first()
+            # Convertir les dates en chaînes si elles ne sont pas nulles
+           if date_rdv:
+                 date_rdv = pd.to_datetime(date_rdv).strftime('%Y-%m-%d')
+           if date_raccordement:
+                 date_raccordement = pd.to_datetime(date_raccordement).strftime('%Y-%m-%d')
 
-            if not user:
+
+           user = User.query.filter_by(username=username).first()
+
+           if not user:
                 # Générer un mot de passe aléatoire pour les nouveaux utilisateurs
                 plain_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
                 hashed_password = generate_password_hash(plain_password, method='pbkdf2:sha256')
@@ -213,7 +220,7 @@ def upload_sales():
                 db.session.commit()
 
             # Créer une nouvelle vente associée à l'utilisateur
-            new_sale = Sale(
+           new_sale = Sale(
                 date=datetime.now().strftime('%Y-%m-%d'),  # Vous pouvez modifier cette date
                 offer_type=offer_type,
                 plan=plan,
@@ -221,8 +228,12 @@ def upload_sales():
                 user_id=user.id,
                 class_type=class_type,
                 contract_number=contract_number,
+                date_rdv=date_rdv,
+                date_raccordement=date_raccordement,
+                client_name=client_name
             )
-            db.session.add(new_sale)
+
+           db.session.add(new_sale)
 
         db.session.commit()
         return "Sales uploaded successfully!"
@@ -347,6 +358,9 @@ def view_archives():
             'plan': archive.plan,
             'quantity': archive.quantity,
             'contract_number': archive.contract_number,
+            'date_rdv': archive.date_rdv,  # Ajout de la colonne Date RDV
+            'date_raccordement': archive.date_raccordement,  # Ajout de la colonne Date Raccordement
+            'client_name': archive.client_name,  # Ajout de la colonne Nom Client
             'archived_at': archive.archived_at
         })
 

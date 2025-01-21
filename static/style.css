@@ -200,13 +200,7 @@ th {
     text-align: center;
 }
 
-th::after {
-    content: '⇅'; /* Icône de tri */
-    font-size: 0.8rem;
-    position: absolute;
-    right: 10px;
-    opacity: 0.6;
-}
+
 
 td {
     font-size: 0.9rem;
@@ -618,14 +612,14 @@ body {
 .user-sales table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin-top: 10px;
     background: #1a1a1a; /* Fond noir foncé */
     border-radius: 10px;
     overflow: hidden;
 }
 
 .user-sales th, .user-sales td {
-    padding: 12px 15px;
+    padding: 10px 10px;
     border: 1px solid #333; /* Bordures grises */
     text-align: center;
     color: white;
@@ -635,7 +629,7 @@ body {
     background: #333; /* Fond gris foncé */
     color: white;
     font-weight: bold;
-    text-transform: uppercase;
+    
 }
 
 .user-sales tr:nth-child(even) {
@@ -1460,3 +1454,43 @@ h1 {
         transform: scale(1.2); /* Agrandissement au survol */
     }
 </style>
+
+
+
+
+.dashboard table {
+    width: 100%; /* Le tableau occupe toute la largeur disponible */
+    border-collapse: collapse; /* Supprime les espaces entre les bordures des cellules */
+    margin: 0 auto; /* Centre le tableau horizontalement */
+    overflow-x: auto; /* Active le défilement horizontal si nécessaire */
+}
+
+.dashboard th, .dashboard td {
+    text-align: left; /* Aligne le texte à gauche */
+    padding: 12px; /* Ajoute de l'espace interne */
+    border: 1px solid #ddd; /* Bordure légère pour une meilleure lisibilité */
+    white-space: nowrap; /* Empêche le contenu de s'étendre sur plusieurs lignes */
+}
+
+.dashboard tr:nth-child(even) {
+    background-color: #f9f9f9; /* Alternance des couleurs pour les lignes */
+}
+
+.dashboard tr:hover {
+    background-color: #f1f1f1; /* Couleur au survol pour une meilleure interaction */
+}
+
+/* Ajoutez une div conteneur pour gérer le débordement */
+.dashboard .table-container {
+    overflow-x: auto; /* Active le défilement horizontal si le tableau dépasse */
+    margin-top: 20px; /* Espace au-dessus du tableau */
+}
+
+
+
+.dashboard-table th {
+    color: #ffcc00; /* Couleur dorée */
+ 
+}
+
+
