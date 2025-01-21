@@ -6,11 +6,20 @@
     <title>OCF - CRM Dashboard</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+      <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
     <!-- CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
      
 </head>
 <body>
+
+   
 
  <style>
         body {
@@ -64,8 +73,24 @@
 
     <!-- Main Container -->
     <div class="container">
+
+
         {% if page == 'login' %}
         <div class="form-container">
+
+             <div id="audio-prompt" style="text-align: center; margin-top: 20px;">
+           <button id="audio-button" style="background: none; border: none; cursor: pointer;">
+           <i id="audio-icon" class="fas fa-volume-mute" style="font-size: 40px; color: #ffcc00;"></i>
+           </button>
+        
+           </div>
+
+          <audio id="background-audio" loop>
+          <source src="{{ url_for('static', filename='audio/background-audio.mp3') }}" type= "audio/mpeg">
+            Your browser does not support the audio element.
+         </audio>
+
+
             <h1 class="main-title gradient">Bienvenue chez OCF</h1>
             {% if error %}
             <p class="error">{{ error }}</p>
@@ -76,14 +101,6 @@
                 <button type="submit">Login</button>
             </form>
         </div>
-
-
-
-         <audio autoplay loop>
-          <source src="{{ url_for('static', filename='audio/background-audio.mp3') }}" type="audio/mpeg">
-         Your browser does not support the audio element.
-         </audio>
-         
 
 
 
@@ -121,6 +138,8 @@
         </form>
 
         {% elif page == 'dashboard' %}
+        
+
         <h1>Tableau de Bord</h1>
         <div class="totals-container">
             <div class="card total-vv">
@@ -372,6 +391,12 @@
     </div>
 
 
+<div id="main-content">
+        {% block content %}
+        {% endblock %}
+</div>
+
+
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const tables = document.querySelectorAll("table");
@@ -458,7 +483,26 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const audio = document.getElementById('background-audio');
+        const audioButton = document.getElementById('audio-button');
+        const audioIcon = document.getElementById('audio-icon');
 
+        // Activer la musique lorsque l'utilisateur clique sur l'icône
+        audioButton.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play();
+                audioIcon.classList.remove('fa-volume-mute');
+                audioIcon.classList.add('fa-volume-up');
+            } else {
+                audio.pause();
+                audioIcon.classList.remove('fa-volume-up');
+                audioIcon.classList.add('fa-volume-mute');
+            }
+        });
+    });
+</script>
 
 
 

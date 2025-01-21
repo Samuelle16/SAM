@@ -109,6 +109,18 @@ def dashboard():
     total_vr = sum(sale.quantity for sale in all_sales if sale.class_type == 'VR')
     total_mobiles = sum(sale.quantity for sale in all_sales if sale.class_type == 'Mobiles')
 
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return render_template(
+            'dashboard.html',  # Page sans layout
+            all_sales=all_sales,
+            total_vv=total_vv,
+            total_vr=total_vr,
+            total_mobiles=total_mobiles,
+            filter_username=filter_username,
+            filter_contract_number=filter_contract_number
+        )
+
+
     return render_template(
         'layout.html',
         page='dashboard',

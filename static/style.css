@@ -1423,3 +1423,27 @@ h1 {
         font-size: 1.5rem; /* Réduisez légèrement sur les petits écrans */
     }
 }
+
+
+
+
+
+<style>
+    #audio-button {
+        background-color: #fff;
+        border-radius: 50%;
+        padding: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    #audio-button:hover {
+        transform: scale(1.1); /* Légère augmentation de taille */
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Ombre plus marquée */
+    }
+
+    #audio-icon {
+        font-size: 24px;
+        color: #ffcc00; /* Jaune doré */
+    }
+</style>
