@@ -1507,3 +1507,39 @@ h1 {
 
 
 
+
+.table-container {
+    max-width: 100%; /* La table ne dépassera pas la largeur de son conteneur */
+    overflow-x: auto; /* Active le défilement horizontal si nécessaire */
+    margin: 0 auto; /* Centrer la table dans le conteneur */
+}
+
+.user-sales {
+    overflow-x: auto; /* Permet le défilement horizontal de la table si elle est trop large */
+}
+
+.dashboard-table {
+    width: 100%; /* La table occupe 100% de la largeur du conteneur */
+    table-layout: auto; /* Ajuste la largeur des colonnes automatiquement */
+    border-collapse: collapse; /* Supprime les espaces entre les cellules */
+}
+
+.dashboard-table th, .dashboard-table td {
+    
+    text-align: center; /* Alignement du texte dans les cellules */
+    padding: 8px; /* Ajoute un espace entre le contenu et la bordure */
+   
+}
+
+
+
+
+
+
+.dashboard-table {
+    font-size: 12px; /* Réduit la taille de la police */
+}
+
+.dashboard-table th, .dashboard-table td {
+    padding: 4px; /* Réduit l'espace à l'intérieur des cellules */
+}

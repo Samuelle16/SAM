@@ -175,7 +175,7 @@
              <button type="submit">Appliquer</button>
 
          </form>
-
+     
 
      <div class="table-container">
       <div class="user-sales">
@@ -211,6 +211,7 @@
         </table>
 
         </div>
+         <div class="scrollbar-horizontal"></div>
 
          </div>
 
@@ -532,6 +533,39 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tableScrollable = document.querySelector('.user-sales');
+        const scrollbarHorizontal = document.querySelector('.scrollbar-horizontal');
+
+        // Synchronisation des défilements
+        scrollbarHorizontal.addEventListener('scroll', () => {
+            tableScrollable.scrollLeft = scrollbarHorizontal.scrollLeft;
+        });
+
+        tableScrollable.addEventListener('scroll', () => {
+            scrollbarHorizontal.scrollLeft = tableScrollable.scrollLeft;
+        });
+    });
+</script>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', () => {
+    const table = document.querySelector('.dashboard-table');
+    const container = document.querySelector('.table-container');
+
+    if (table && container) {
+        // Ajuste la taille de la table pour qu'elle ne dépasse pas la largeur du conteneur
+        if (table.offsetWidth > container.offsetWidth) {
+            table.style.width = '100%'; // Forcer la table à s'adapter à 100% de la largeur
+        }
+    }
+});
+
+</script>
 
 
 
