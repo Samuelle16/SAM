@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import aliased
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import pandas as pd
@@ -19,9 +20,12 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
-    plain_password = db.Column(db.String(200), nullable=True)  # Stockage en clair (temporaire)
-    role = db.Column(db.String(20), default='user')  # user or admin
+    plain_password = db.Column(db.String(200), nullable=True)  # Stockage temporaire du mot de passe
+    role = db.Column(db.String(20), default='user')  # 'user', 'admin', ou 'manager'
     sales = db.relationship('Sale', backref='user', lazy=True)
+    manager_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Référence au manager
+    managed_users = db.relationship('User', backref=db.backref('manager', remote_side=[id]), lazy=True)  # Relation inverse
+
 
 # Sale model
 class Sale(db.Model):
@@ -87,34 +91,70 @@ def dashboard():
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
-    user = User.query.get(session['user_id'])
+    user = User.query.get(session['user_id'])  # Récupère l'utilisateur connecté
 
-    # Récupérer les filtres du formulaire
+    # Récupérer les filtres depuis le formulaire (facultatif)
     filter_username = request.form.get('filter_username', '').strip()
     filter_contract_number = request.form.get('filter_contract_number', '').strip()
-
-    # Début de la requête
+    filter_manager = request.form.get('filter_manager', '').strip()  # Nouveau filtre par manager
+    # Préparer la requête de base pour les ventes
     sales_query = Sale.query
 
     if user.role == 'admin':
-        # Filtrer pour les administrateurs
+         # Les administrateurs voient toutes les ventes
         if filter_username:
-            sales_query = sales_query.join(User).filter(User.username.ilike(f"%{filter_username}%"))
+           sales_query = sales_query.join(User).filter(User.username.ilike(f"%{filter_username}%"))
         if filter_contract_number:
-            sales_query = sales_query.filter(Sale.contract_number.ilike(f"%{filter_contract_number}%"))
-        all_sales = sales_query.all()
+           sales_query = sales_query.filter(Sale.contract_number.ilike(f"%{filter_contract_number}%"))
+    
+        # Filtrer par manager
+        if filter_manager:
+           manager_alias = aliased(User)  # Alias pour éviter les conflits sur la table User
+           sales_query = sales_query.join(Sale.user).join(manager_alias, User.manager).filter(manager_alias.username.ilike(f"%{filter_manager}%"))
+
+        all_sales = sales_query.options(db.joinedload(Sale.user).joinedload(User.manager)).all()
+
+
+    elif user.role == 'manager':
+        # Les managers voient uniquement les ventes de leurs utilisateurs affiliés
+        managed_user_ids = [u.id for u in user.managed_users]
+        sales_query = sales_query.filter(Sale.user_id.in_(managed_user_ids))
+
+        # Joindre la table User pour permettre les filtres basés sur l'utilisateur
+        sales_query = sales_query.join(Sale.user)
+
+        # Appliquer les filtres si spécifiés
+        if filter_username:
+           sales_query = sales_query.filter(User.username.ilike(f"%{filter_username}%"))
+        if filter_contract_number:
+           sales_query = sales_query.filter(Sale.contract_number.ilike(f"%{filter_contract_number}%"))
+
+        # Filtrer par manager (même si un manager voit ses propres utilisateurs, cela peut être utile si nécessaire)
+        if filter_manager:
+           manager_alias = aliased(User)  # Alias pour éviter les conflits sur la table User
+           sales_query = sales_query.join(manager_alias, User.manager).filter(manager_alias.username.ilike(f"%{filter_manager}%"))
+
+        # Récupérer toutes les ventes avec les relations chargées
+        all_sales = sales_query.options(db.joinedload(Sale.user)).all()
+
+
     elif user.role == 'user':
-        # Filtrer uniquement les ventes de l'utilisateur connecté
+        # Les utilisateurs voient uniquement leurs propres ventes
         sales_query = sales_query.filter_by(user_id=user.id)
         if filter_contract_number:
             sales_query = sales_query.filter(Sale.contract_number.ilike(f"%{filter_contract_number}%"))
-        all_sales = sales_query.all()
+        all_sales = sales_query.options(db.joinedload(Sale.user)).all()
 
-    # Calcul des totaux pour les cartes
+    else:
+        # Cas où le rôle est inconnu (sécurité)
+        all_sales = []
+
+    # Calcul des totaux pour les types de ventes (VV, VR, Mobiles)
     total_vv = sum(sale.quantity for sale in all_sales if sale.class_type == 'VV')
     total_vr = sum(sale.quantity for sale in all_sales if sale.class_type == 'VR')
     total_mobiles = sum(sale.quantity for sale in all_sales if sale.class_type == 'Mobiles')
 
+    # Rendu du tableau
     return render_template(
         'layout.html',
         page='dashboard',
@@ -125,6 +165,9 @@ def dashboard():
         filter_username=filter_username,
         filter_contract_number=filter_contract_number
     )
+
+
+
 
 
 
@@ -162,83 +205,100 @@ def upload_sales():
         return redirect(url_for('login'))
 
     if request.method == 'POST':
-        file = request.files['file']
-
+        file = request.files.get('file')
         if not file:
-            return "No file uploaded"
+            return "No file uploaded", 400  # Retourne une erreur si aucun fichier n'est fourni
 
-        data = pd.read_excel(file)
+        try:
+            data = pd.read_excel(file)  # Charge le fichier Excel
 
-        # Archiver les données existantes
-        existing_sales = Sale.query.all()
-        for sale in existing_sales:
-            archived_sale = ArchivedSale(
-                date=sale.date,
-                offer_type=sale.offer_type,
-                plan=sale.plan,
-                quantity=sale.quantity,
-                user_id=sale.user_id,
-                contract_number=sale.contract_number,
-                date_rdv=sale.date_rdv,
-                date_raccordement=sale.date_raccordement,
-                client_name=sale.client_name,
-                archived_at=datetime.now()
-            )
-            db.session.add(archived_sale)
+            # Archiver les ventes existantes
+            existing_sales = Sale.query.all()
+            for sale in existing_sales:
+                archived_sale = ArchivedSale(
+                    date=sale.date,
+                    offer_type=sale.offer_type,
+                    plan=sale.plan,
+                    quantity=sale.quantity,
+                    user_id=sale.user_id,
+                    contract_number=sale.contract_number,
+                    date_rdv=sale.date_rdv,
+                    date_raccordement=sale.date_raccordement,
+                    client_name=sale.client_name,
+                    archived_at=datetime.now()
+                )
+                db.session.add(archived_sale)
 
-        Sale.query.delete()
+            Sale.query.delete()  # Supprime les anciennes ventes
 
-        # Insérer les nouvelles données
-        for index, row in data.iterrows():
-           username = row['Nom Prénom']
-           offer_type = row['Type (Box ou Mobile)']
-           plan = row['Plan (ULTYM, MUST, 130Go, 20Go)']
-           quantity = int(row['Quantité']) if pd.notnull(row['Quantité']) else ''
-           class_type = row['Class'] if pd.notnull(row['Class']) else ''
-           contract_number = str(row['Numéro de contrat']) if pd.notnull(row['Numéro de contrat']) else ''
-           date_rdv = row['Date RDV'] if pd.notnull(row['Date RDV']) else ''
-           date_raccordement = row['Date Raccordement'] if pd.notnull(row['Date Raccordement']) else ''
-           client_name = row['Nom Client'] if pd.notnull(row['Nom Client']) else ''
+            # Parcourir les données du fichier Excel
+            for _, row in data.iterrows():
+                username = row['Nom Prénom']
+                manager_username = row['Manager'] if 'Manager' in row and pd.notnull(row['Manager']) else None
+                offer_type = row['Type (Box ou Mobile)']
+                plan = row['Plan (ULTYM, MUST, 130Go, 20Go)']
+                quantity = int(row['Quantité']) if pd.notnull(row['Quantité']) else 0
+                class_type = row['Class'] if pd.notnull(row['Class']) else ''
+                contract_number = str(row['Numéro de contrat']) if pd.notnull(row['Numéro de contrat']) else ''
+                date_rdv = row['Date RDV'] if pd.notnull(row['Date RDV']) else ''
+                date_raccordement = row['Date Raccordement'] if pd.notnull(row['Date Raccordement']) else ''
+                client_name = row['Nom Client'] if pd.notnull(row['Nom Client']) else ''
 
-            # Convertir les dates en chaînes si elles ne sont pas nulles
-           if date_rdv:
-                 date_rdv = pd.to_datetime(date_rdv).strftime('%Y-%m-%d')
-           if date_raccordement:
-                 date_raccordement = pd.to_datetime(date_raccordement).strftime('%Y-%m-%d')
+                # Convertir les dates en chaînes si elles existent
+                if date_rdv:
+                    date_rdv = pd.to_datetime(date_rdv).strftime('%Y-%m-%d')
+                if date_raccordement:
+                    date_raccordement = pd.to_datetime(date_raccordement).strftime('%Y-%m-%d')
 
+                # Gestion ou création du manager
+                manager = None
+                if manager_username:
+                    manager = User.query.filter_by(username=manager_username, role='manager').first()
+                    if not manager:
+                        # Crée un nouveau manager si absent
+                        manager_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+                        manager_hashed_password = generate_password_hash(manager_password, method='pbkdf2:sha256')
+                        manager = User(username=manager_username, password=manager_hashed_password, plain_password=manager_password, role='manager')
+                        db.session.add(manager)
+                        db.session.commit()
 
-           user = User.query.filter_by(username=username).first()
+                # Gestion ou création de l'utilisateur
+                user = User.query.filter_by(username=username).first()
+                if not user:
+                    user_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+                    user_hashed_password = generate_password_hash(user_password, method='pbkdf2:sha256')
+                    user = User(username=username, password=user_hashed_password, plain_password=user_password, role='user', manager=manager)
+                    db.session.add(user)
+                else:
+                    user.manager = manager  # Met à jour le manager de l'utilisateur existant
 
-           if not user:
-                # Générer un mot de passe aléatoire pour les nouveaux utilisateurs
-                plain_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
-                hashed_password = generate_password_hash(plain_password, method='pbkdf2:sha256')
-
-                # Créer un nouvel utilisateur
-                user = User(username=username, password=hashed_password, plain_password=plain_password, role='user')
-                db.session.add(user)
                 db.session.commit()
 
-            # Créer une nouvelle vente associée à l'utilisateur
-           new_sale = Sale(
-                date=datetime.now().strftime('%Y-%m-%d'),  # Vous pouvez modifier cette date
-                offer_type=offer_type,
-                plan=plan,
-                quantity=quantity,
-                user_id=user.id,
-                class_type=class_type,
-                contract_number=contract_number,
-                date_rdv=date_rdv,
-                date_raccordement=date_raccordement,
-                client_name=client_name
-            )
+                # Crée une nouvelle vente associée à l'utilisateur
+                new_sale = Sale(
+                    date=datetime.now().strftime('%Y-%m-%d'),
+                    offer_type=offer_type,
+                    plan=plan,
+                    quantity=quantity,
+                    user_id=user.id,
+                    class_type=class_type,
+                    contract_number=contract_number,
+                    date_rdv=date_rdv,
+                    date_raccordement=date_raccordement,
+                    client_name=client_name
+                )
+                db.session.add(new_sale)
 
-           db.session.add(new_sale)
+            db.session.commit()
+            return "Sales and users with managers uploaded successfully!"
 
-        db.session.commit()
-        return "Sales uploaded successfully!"
+        except Exception as e:
+            db.session.rollback()  # Annule les modifications en cas d'erreur
+            return f"An error occurred: {str(e)}", 500
 
     return render_template('layout.html', page='upload_sales')
+
+
 
 
 @app.route('/admin/export_users', methods=['GET'])
@@ -252,15 +312,15 @@ def export_users():
     sheet.title = "Users and Passwords"
 
     # Ajouter les en-têtes
-    sheet.append(["Username", "Password"])
+    sheet.append(["Username", "Role", "Password"])
 
-    # Récupérer tous les utilisateurs (sauf admin)
-    users = User.query.filter(User.role != 'admin').all()
+    # Récupérer tous les utilisateurs (y compris les managers si souhaité)
+    users = User.query.all()
 
     # Ajouter les données des utilisateurs dans le fichier Excel
     for user in users:
-        # Utiliser plain_password pour exporter les mots de passe en clair
-        sheet.append([user.username, user.plain_password or "N/A"])
+        if user.role in ['user', 'manager']:  # Inclure les utilisateurs et les managers
+            sheet.append([user.username, user.role, user.plain_password or "N/A"])
 
     # Sauvegarder le fichier Excel dans un flux en mémoire
     output = BytesIO()
@@ -274,6 +334,7 @@ def export_users():
         as_attachment=True,
         download_name='users_and_passwords.xlsx'
     )
+
 
 
 
@@ -490,5 +551,4 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=True)
-
 

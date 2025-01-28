@@ -53,6 +53,10 @@
         <li><a href="/admin/create_user">Ajout utilisateur</a></li>
         <li><a href="/admin/set_password">renitialiser mot de passe</a></li>
         <li><a href="/logout">Logout</a></li>
+        {% elif session.get('role') == 'manager' %}
+        <!-- Menu pour les managers -->
+        <li><a href="/dashboard">Tableau de Bord</a></li>
+        <li><a href="/logout">Logout</a></li>
         {% elif session.get('role') == 'user' %}
         <!-- Menu pour les utilisateurs -->
         <li><a href="/dashboard">Tableau de Bord</a></li>
@@ -173,13 +177,16 @@
          <label for="filter-contract-number">Filtrer par Numéro de contrat:</label>
          <input type="text" id="filter-contract-number" name="filter_contract_number"        value="{{ filter_contract_number or '' }}">
 
+         <label for="filter-manager">Filtrer par Manager :</label>
+         <input type="text" id="filter-manager" name="filter_manager" value="{{ filter_manager or '' }}">
+
              <button type="submit">Appliquer</button>
 
          </form>
      
 
      <div class="table-container">
-      <div class="user-sales">
+      <div class="table-scrollable user-sales">
         <table class="dashboard-table">
             <thead>
                 <tr>
@@ -192,11 +199,12 @@
                     <th>Date RDV</th>
                     <th>Date Raccordement</th>
                     <th>Nom Client</th>
+                    <th>Animateur</th>
                 </tr>
             </thead>
             <tbody>
                 {% for sale in all_sales %}
-                <tr>
+                <tr data-class-type="{{ sale.class_type }}" data-contract-number="{{ sale.contract_number }}">
                     <td>{{ sale.user.username }}</td>
                     <td>{{ sale.offer_type }}</td>
                     <td>{{ sale.plan }}</td>
@@ -206,6 +214,7 @@
                     <td>{{ sale.date_rdv }}</td>
                     <td>{{ sale.date_raccordement }}</td>
                     <td>{{ sale.client_name }}</td>
+                    <td>{{ sale.user.manager.username if sale.user.manager else "N/A" }}</td> <!-- Manager ici -->
                 </tr>
                 {% endfor %}
             </tbody>
@@ -228,9 +237,6 @@
       <!-- Filter by Numéro de Contrat -->
     <label for="filter-contract-number">Filter par Numéro de Contrat:</label>
     <input type="text" id="filter-contract-number" name="filter_contract_number" value="{{ filter_contract_number or '' }}">
-
-
-    <label for="filter-role">Filtrer par role:</label>
   
 
     <button type="submit">Appliquer</button>
@@ -568,6 +574,93 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </script>
 
+<script>
+
+document.addEventListener('DOMContentLoaded', () => {
+    const rows = document.querySelectorAll('tbody tr'); // Sélectionne toutes les lignes du tableau
+    const contractGroups = {}; // Regroupera les lignes par numéro de contrat
+
+    // Regrouper les lignes par numéro de contrat
+    rows.forEach(row => {
+        const contractNumber = row.getAttribute('data-contract-number');
+        if (!contractGroups[contractNumber]) {
+            contractGroups[contractNumber] = [];
+        }
+        contractGroups[contractNumber].push(row);
+    });
+
+    // Appliquer les styles conditionnels
+    Object.entries(contractGroups).forEach(([contractNumber, group]) => {
+        let hasVR = false;
+
+        // Vérifie si le groupe contient une ligne VR
+        group.forEach(row => {
+            const classType = row.getAttribute('data-class-type');
+            if (classType === 'VR') {
+                hasVR = true;
+                row.style.backgroundColor = 'green'; // Applique le vert pour les lignes VR
+            }
+        });
+
+        // Si une ligne VR existe, applique l'orange aux lignes VV
+        if (hasVR) {
+            group.forEach(row => {
+                const classType = row.getAttribute('data-class-type');
+                if (classType === 'VV') {
+                    row.style.backgroundColor = 'orange'; // Applique l'orange pour les lignes VV associées
+                }
+            });
+        }
+    });
+});
+
+</script>
+
+
+
+
+<script>
+    
+document.addEventListener("DOMContentLoaded", () => {
+    const scrollableContainer = document.querySelector(".table-scrollable"); // Sélectionner le conteneur scrollable
+
+    let isDragging = false; // Indique si l'utilisateur est en train de glisser
+    let startX, scrollLeft;
+
+    // Événement de début de clic (mousedown)
+    scrollableContainer.addEventListener("mousedown", (e) => {
+        isDragging = true; // Activer le glissement
+        scrollableContainer.classList.add("dragging");
+        startX = e.pageX - scrollableContainer.offsetLeft; // Position initiale du clic
+        scrollLeft = scrollableContainer.scrollLeft; // Position de défilement actuelle
+    });
+
+    // Événement de mouvement de la souris (mousemove)
+    scrollableContainer.addEventListener("mousemove", (e) => {
+        if (!isDragging) return; // Si l'utilisateur ne glisse pas, ne rien faire
+        e.preventDefault(); // Empêcher les comportements par défaut
+        const x = e.pageX - scrollableContainer.offsetLeft; // Position actuelle de la souris
+        const walk = (x - startX) * 2; // Distance parcourue, multiplier par un facteur pour ajuster la sensibilité
+        scrollableContainer.scrollLeft = scrollLeft - walk; // Mettre à jour la position de défilement
+    });
+
+    // Événement de fin du clic (mouseup)
+    scrollableContainer.addEventListener("mouseup", () => {
+        isDragging = false; // Désactiver le glissement
+        scrollableContainer.classList.remove("dragging");
+    });
+
+    // Événement lorsque la souris quitte le conteneur (mouseleave)
+    scrollableContainer.addEventListener("mouseleave", () => {
+        isDragging = false; // Désactiver le glissement
+        scrollableContainer.classList.remove("dragging");
+    });
+});
+
+
+
+
+</script>
 
 
 </body>

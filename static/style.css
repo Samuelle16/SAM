@@ -1543,3 +1543,21 @@ h1 {
 .dashboard-table th, .dashboard-table td {
     padding: 4px; /* Réduit l'espace à l'intérieur des cellules */
 }
+
+
+
+
+
+.table-scrollable {
+    overflow-x: auto; /* Permet le défilement horizontal */
+    cursor: grab; /* Curseur pour indiquer le balayage */
+    padding: 10px;
+    border: 1px solid #ddd; /* Ajoute une bordure autour de la table */
+    background-color: #fff; /* Conserve l'arrière-plan blanc */
+    border-radius: 8px; /* Coins arrondis */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Ajoute une ombre légère */
+}
+
+.table-scrollable:active {
+    cursor: grabbing; /* Change le curseur lorsqu'on maintient */
+}
