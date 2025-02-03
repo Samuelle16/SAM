@@ -93,56 +93,51 @@ def dashboard():
 
     user = User.query.get(session['user_id'])  # Récupère l'utilisateur connecté
 
-    # Récupérer les filtres depuis le formulaire (facultatif)
+    # Récupérer tous les managers pour afficher la liste dans le filtre
+    all_managers = User.query.filter_by(role='manager').all()
+
+    # Récupérer les filtres depuis le formulaire
     filter_username = request.form.get('filter_username', '').strip()
     filter_contract_number = request.form.get('filter_contract_number', '').strip()
-    filter_manager = request.form.get('filter_manager', '').strip()  # Nouveau filtre par manager
+    filter_managers = request.form.getlist('filter_managers')  # Récupération en LISTE
+
     # Préparer la requête de base pour les ventes
     sales_query = Sale.query
 
     if user.role == 'admin':
-         # Les administrateurs voient toutes les ventes
+        # Filtrer par username
         if filter_username:
-           sales_query = sales_query.join(User).filter(User.username.ilike(f"%{filter_username}%"))
+            sales_query = sales_query.join(User).filter(User.username.ilike(f"%{filter_username}%"))
+
+        # Filtrer par numéro de contrat
         if filter_contract_number:
-           sales_query = sales_query.filter(Sale.contract_number.ilike(f"%{filter_contract_number}%"))
-    
-        # Filtrer par manager
-        if filter_manager:
-           manager_alias = aliased(User)  # Alias pour éviter les conflits sur la table User
-           sales_query = sales_query.join(Sale.user).join(manager_alias, User.manager).filter(manager_alias.username.ilike(f"%{filter_manager}%"))
+            sales_query = sales_query.filter(Sale.contract_number.ilike(f"%{filter_contract_number}%"))
+
+        # Filtrer par plusieurs managers sélectionnés
+        if filter_managers:
+            sales_query = sales_query.join(Sale.user).filter(User.manager_id.in_(filter_managers))
 
         all_sales = sales_query.options(db.joinedload(Sale.user).joinedload(User.manager)).all()
-
 
     elif user.role == 'manager':
         # Les managers voient uniquement les ventes de leurs utilisateurs affiliés
         managed_user_ids = [u.id for u in user.managed_users]
         sales_query = sales_query.filter(Sale.user_id.in_(managed_user_ids))
 
-        # Joindre la table User pour permettre les filtres basés sur l'utilisateur
-        sales_query = sales_query.join(Sale.user)
-
-        # Appliquer les filtres si spécifiés
+        # Appliquer les filtres
         if filter_username:
-           sales_query = sales_query.filter(User.username.ilike(f"%{filter_username}%"))
+            sales_query = sales_query.filter(User.username.ilike(f"%{filter_username}%"))
         if filter_contract_number:
-           sales_query = sales_query.filter(Sale.contract_number.ilike(f"%{filter_contract_number}%"))
+            sales_query = sales_query.filter(Sale.contract_number.ilike(f"%{filter_contract_number}%"))
 
-        # Filtrer par manager (même si un manager voit ses propres utilisateurs, cela peut être utile si nécessaire)
-        if filter_manager:
-           manager_alias = aliased(User)  # Alias pour éviter les conflits sur la table User
-           sales_query = sales_query.join(manager_alias, User.manager).filter(manager_alias.username.ilike(f"%{filter_manager}%"))
-
-        # Récupérer toutes les ventes avec les relations chargées
         all_sales = sales_query.options(db.joinedload(Sale.user)).all()
-
 
     elif user.role == 'user':
         # Les utilisateurs voient uniquement leurs propres ventes
         sales_query = sales_query.filter_by(user_id=user.id)
         if filter_contract_number:
             sales_query = sales_query.filter(Sale.contract_number.ilike(f"%{filter_contract_number}%"))
+
         all_sales = sales_query.options(db.joinedload(Sale.user)).all()
 
     else:
@@ -159,12 +154,15 @@ def dashboard():
         'layout.html',
         page='dashboard',
         all_sales=all_sales,
+        all_managers=all_managers,  # Envoyer la liste des managers
+        filter_managers=filter_managers,  # Passer les managers sélectionnés
+        filter_username=filter_username,
+        filter_contract_number=filter_contract_number,
         total_vv=total_vv,
         total_vr=total_vr,
-        total_mobiles=total_mobiles,
-        filter_username=filter_username,
-        filter_contract_number=filter_contract_number
+        total_mobiles=total_mobiles
     )
+
 
 
 
@@ -198,6 +196,84 @@ def create_user():
 import string
 import random
 from werkzeug.security import generate_password_hash
+
+
+
+@app.route('/admin/manage_managers')
+def manage_managers():
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect(url_for('login'))
+
+    managers = User.query.filter_by(role='manager').all()
+    all_managers = User.query.filter_by(role='manager').all()  # Pour la réaffectation
+
+    return render_template('layout.html', page='manage_managers', managers=managers, all_managers=all_managers)
+
+
+
+
+@app.route('/admin/delete_manager/<int:manager_id>', methods=['POST'])
+def delete_manager(manager_id):
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect(url_for('login'))
+
+    manager = User.query.get(manager_id)
+
+    if not manager or manager.role != 'manager':
+        flash("❌ Manager introuvable.", "error")
+        return redirect(url_for('manage_managers'))
+
+    # Vérifier si le manager a encore des vendeurs sous sa responsabilité
+    if manager.managed_users:
+        flash("⚠️ Ce manager a encore des vendeurs affiliés. Vous devez les réaffecter avant de supprimer le manager.", "warning")
+        return redirect(url_for('manage_managers'))
+
+    try:
+        # Supprimer les ventes associées au manager
+        Sale.query.filter_by(user_id=manager.id).delete()
+
+        # Supprimer le manager de la base de données
+        db.session.delete(manager)
+        db.session.commit()
+
+        flash("✅ Manager supprimé avec succès.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"❌ Erreur lors de la suppression : {str(e)}", "error")
+
+    return redirect(url_for('manage_managers'))
+
+
+@app.route('/admin/reassign_users', methods=['POST'])
+def reassign_users():
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect(url_for('login'))
+
+    old_manager_id = request.form.get('old_manager')
+    new_manager_id = request.form.get('new_manager', None)  # Peut être vide
+
+    old_manager = User.query.get(old_manager_id)
+    new_manager = User.query.get(new_manager_id) if new_manager_id else None
+
+    if not old_manager or old_manager.role != 'manager':
+        flash("❌ Manager à supprimer introuvable.", "error")
+        return redirect(url_for('manage_managers'))
+
+    try:
+        # Réaffecter les vendeurs
+        for user in old_manager.managed_users:
+            user.manager_id = new_manager.id if new_manager else None
+
+        db.session.commit()
+        flash("✅ Vendeurs réaffectés avec succès.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"❌ Erreur lors de la réaffectation : {str(e)}", "error")
+
+    return redirect(url_for('manage_managers'))
+
+
+
 
 @app.route('/admin/upload_sales', methods=['GET', 'POST'])
 def upload_sales():

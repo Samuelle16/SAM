@@ -16,6 +16,12 @@
 
     <!-- CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Inclure jQuery et Select2 -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
      
 </head>
 <body>
@@ -47,6 +53,7 @@
         <!-- Menu pour les administrateurs -->
         <li><a href="/dashboard">Tableau de Bord</a></li>
         <li><a href="/admin/all_sales">Vendeurs</a></li>
+        <li><a href="/admin/manage_managers">Gestion des Managers</a></li>
         <li><a href="/admin/sales_ranking">Classement Vendeur</a></li>
         <li><a href="/admin/view_archives">Archives</a></li>
         <li><a href="/admin/upload_sales">Mise à jour des ventes</a></li>
@@ -126,6 +133,62 @@
             <button type="submit">Créer utilisateur</button>
         </form>
 
+
+        {% elif page == 'manage_managers' %}
+<h1>Gestion des Managers</h1>
+
+<!-- Formulaire pour réaffecter les vendeurs avant suppression -->
+<!--<h2>Réaffectation des Vendeurs</h2>
+<form method="POST" action="/admin/reassign_users">
+    <label for="old_manager">Manager à supprimer :</label>
+    <select name="old_manager" required>
+        {% for manager in all_managers %}
+        <option value="{{ manager.id }}">{{ manager.username }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="new_manager">Nouveau Manager :</label>
+    <select name="new_manager">
+        <option value="">Aucun (laisser sans manager)</option>
+        {% for manager in all_managers %}
+        <option value="{{ manager.id }}">{{ manager.username }}</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Réaffecter les vendeurs</button>
+</form>
+-->
+
+<!-- Liste des managers avec bouton de suppression -->
+<h2>Liste des Managers</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Nom du Manager</th>
+            <th>Nombre de Vendeurs</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for manager in managers %}
+        <tr>
+            <td>{{ manager.username }}</td>
+            <td>{{ manager.managed_users|length }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('delete_manager', manager_id=manager.id) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce manager ?')">
+                    <button type="submit" style="color: red;">Supprimer</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+
+
+
         {% elif page == 'upload_sales' %}
         <h1>Mettre à jour le Tableau</h1>
         {% if error %}
@@ -178,7 +241,13 @@
          <input type="text" id="filter-contract-number" name="filter_contract_number"        value="{{ filter_contract_number or '' }}">
 
          <label for="filter-manager">Filtrer par Manager :</label>
-         <input type="text" id="filter-manager" name="filter_manager" value="{{ filter_manager or '' }}">
+         <select id="filter_managers" name="filter_managers" multiple>
+        {% for manager in all_managers %}
+            <option value="{{ manager.id }}" {% if manager.id|string in filter_managers %}selected{% endif %}>
+                {{ manager.username }}
+            </option>
+        {% endfor %}
+    </select>
 
              <button type="submit">Appliquer</button>
 
@@ -660,6 +729,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+</script>
+
+
+
+<!-- Script pour activer Select2 -->
+<script>
+    $(document).ready(function() {
+        $('#filter_managers').select2({
+            placeholder: "Sélectionnez un ou plusieurs managers",
+            allowClear: true,
+            width: '100%'
+        });
+    });
 </script>
 
 
