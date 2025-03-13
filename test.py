@@ -223,25 +223,31 @@ def delete_manager(manager_id):
         flash("❌ Manager introuvable.", "error")
         return redirect(url_for('manage_managers'))
 
-    # Vérifier si le manager a encore des vendeurs sous sa responsabilité
-    if manager.managed_users:
-        flash("⚠️ Ce manager a encore des vendeurs affiliés. Vous devez les réaffecter avant de supprimer le manager.", "warning")
-        return redirect(url_for('manage_managers'))
-
     try:
-        # Supprimer les ventes associées au manager
+        # Récupérer les vendeurs affiliés à ce manager
+        managed_users = User.query.filter_by(manager_id=manager.id).all()
+
+        if managed_users:
+            # Trouver un autre manager actif pour réaffecter les vendeurs
+            other_manager = User.query.filter(User.role == 'manager', User.id != manager.id).first()
+            
+            for user in managed_users:
+                user.manager_id = other_manager.id if other_manager else None  # Réaffectation ou suppression du lien
+
+        # Supprimer les ventes du manager
         Sale.query.filter_by(user_id=manager.id).delete()
 
-        # Supprimer le manager de la base de données
+        # Supprimer le manager
         db.session.delete(manager)
         db.session.commit()
 
-        flash("✅ Manager supprimé avec succès.", "success")
+        flash(f"✅ Manager {manager.username} supprimé et ses vendeurs ont été réaffectés.", "success")
     except Exception as e:
         db.session.rollback()
         flash(f"❌ Erreur lors de la suppression : {str(e)}", "error")
 
     return redirect(url_for('manage_managers'))
+
 
 
 @app.route('/admin/reassign_users', methods=['POST'])
