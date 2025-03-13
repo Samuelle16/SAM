@@ -239,7 +239,8 @@
          <!-- Filtrer par numéro de contrat -->
          <label for="filter-contract-number">Filtrer par Numéro de contrat:</label>
          <input type="text" id="filter-contract-number" name="filter_contract_number"        value="{{ filter_contract_number or '' }}">
-
+         
+        {% if session.get('role') == 'admin' %} 
          <label for="filter-manager">Filtrer par Manager :</label>
          <select id="filter_managers" name="filter_managers" multiple>
         {% for manager in all_managers %}
@@ -247,7 +248,8 @@
                 {{ manager.username }}
             </option>
         {% endfor %}
-    </select>
+        </select>
+        {% endif %}
 
              <button type="submit">Appliquer</button>
 
