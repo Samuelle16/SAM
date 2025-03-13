@@ -126,7 +126,7 @@ def dashboard():
 
         # Appliquer les filtres
         if filter_username:
-            sales_query = sales_query.filter(User.username.ilike(f"%{filter_username}%"))
+             sales_query = sales_query.join(User, Sale.user_id == User.id).filter(User.username.ilike(f"%{filter_username}%"))
         if filter_contract_number:
             sales_query = sales_query.filter(Sale.contract_number.ilike(f"%{filter_contract_number}%"))
 
